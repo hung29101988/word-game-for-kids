@@ -45,14 +45,22 @@
     border-radius:50vmin; padding:.6vmin 3vmin; box-shadow:0 .7vmin 0 #3f6b1f; display:flex; align-items:center; gap:1vmin; }
 
   #world { flex:0 0 62%; position:relative; overflow:hidden;
-    background:linear-gradient(#7cc8f5 0%,#aee3ff 55%,#d6f3ff 78%,#d6f3ff 100%); }
+    --sky1:#7cc8f5; --sky2:#aee3ff; --sky3:#d6f3ff; --hill1:#8fcf7a; --hill2:#9fd98a;
+    --grass1:#83cf54; --grass2:#6cbd43; --dirt:#caa15e; --gline:#4f9d35;
+    background:linear-gradient(var(--sky1) 0%,var(--sky2) 55%,var(--sky3) 78%,var(--sky3) 100%); }
+  /* 場景（每兩隻怪獸換一次）*/
+  #world.sc0 {} /* 平原（預設）*/
+  #world.sc1 { --sky1:#ffb16b; --sky2:#ffd49a; --sky3:#ffe9c6; --hill1:#e0a868; --hill2:#d49a55; --grass1:#e8c87f; --grass2:#d6a861; --dirt:#b8864a; --gline:#caa15e; } /* 黃昏沙漠 */
+  #world.sc2 { --sky1:#86c98f; --sky2:#bfe6c0; --sky3:#e1f3e2; --hill1:#5da35a; --hill2:#6cb368; --grass1:#5fae42; --grass2:#4d9a35; --dirt:#8a6a3c; --gline:#3c7a2a; } /* 森林 */
+  #world.sc3 { --sky1:#454a78; --sky2:#6a6296; --sky3:#9a8fc0; --hill1:#5a5488; --hill2:#6a6296; --grass1:#6f5fa0; --grass2:#5a4d88; --dirt:#3f3760; --gline:#7a6fb0; } /* 黃昏紫 */
+  #world.sc4 { --sky1:#20274d; --sky2:#3a3f6b; --sky3:#5a5488; --hill1:#3a3f6b; --hill2:#454a78; --grass1:#3f4a6b; --grass2:#2e3550; --dirt:#1f2540; --gline:#5a5488; } /* 夜晚 */
   /* 遠山 */
   #bgFar { position:absolute; left:0; bottom:20%; width:300%; height:42%;
     background:
-      radial-gradient(closest-side at 12% 100%, #8fcf7a 0 18vmin, transparent 18vmin),
-      radial-gradient(closest-side at 32% 100%, #9fd98a 0 22vmin, transparent 22vmin),
-      radial-gradient(closest-side at 55% 100%, #8fcf7a 0 16vmin, transparent 16vmin),
-      radial-gradient(closest-side at 78% 100%, #9fd98a 0 24vmin, transparent 24vmin);
+      radial-gradient(closest-side at 12% 100%, var(--hill1) 0 18vmin, transparent 18vmin),
+      radial-gradient(closest-side at 32% 100%, var(--hill2) 0 22vmin, transparent 22vmin),
+      radial-gradient(closest-side at 55% 100%, var(--hill1) 0 16vmin, transparent 16vmin),
+      radial-gradient(closest-side at 78% 100%, var(--hill2) 0 24vmin, transparent 24vmin);
     background-repeat:no-repeat; opacity:.85; }
   #bgFar.scroll { animation:farScroll 9s linear infinite; }
   @keyframes farScroll { from{transform:translateX(0)} to{transform:translateX(-33.33%)} }
@@ -68,15 +76,15 @@
 
   /* 地面 */
   #ground { position:absolute; left:0; right:0; bottom:0; height:20%;
-    background-color:#caa15e;
+    background-color:var(--dirt);
     background-image:
-      linear-gradient(#83cf54,#6cbd43),
+      linear-gradient(var(--grass1),var(--grass2)),
       repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 3px, transparent 3px 36px),
       repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 6px, transparent 6px 18px);
     background-size:100% 34%, 36px 100%, 100% 100%;
     background-position:0 0, 0 0, 0 0;
     background-repeat:no-repeat, repeat, repeat;
-    border-top:.7vmin solid #4f9d35; z-index:5; }
+    border-top:.7vmin solid var(--gline); z-index:5; }
   #ground.scroll { animation:groundScroll .5s linear infinite; }
   @keyframes groundScroll { from{background-position:0 0,0 0,0 0} to{background-position:0 0,-36px 0,0 0} }
 
@@ -155,6 +163,21 @@
     background:radial-gradient(circle at 35% 30%,#8be78b,#2eaf5a); color:#fff;
     box-shadow:0 1.2vmin 0 #1d7c3d; animation:pulse 1.2s ease-in-out infinite; }
   .endBtn:active { transform:translateY(.8vmin); box-shadow:0 .4vmin 0 #1d7c3d; }
+
+  /* ===== 抖一抖（護眼休息）畫面 ===== */
+  #restScreen { position:fixed; inset:0; z-index:200; display:none;
+    flex-direction:column; align-items:center; justify-content:center; gap:3vmin; color:#fff;
+    background:radial-gradient(circle at 50% 32%, #41527f 0%, #28305a 52%, #161a35 100%);
+    text-align:center; overflow:hidden; }
+  #restScreen.show { display:flex; }
+  #restScreen .star { position:absolute; color:#fff; opacity:.5; font-size:3vmin; animation:twinkle 2.6s ease-in-out infinite; }
+  @keyframes twinkle { 0%,100%{ opacity:.2; transform:scale(.8) } 50%{ opacity:.9; transform:scale(1.1) } }
+  #restMoon { font-size:22vmin; line-height:1; z-index:1; animation:hop 3.2s ease-in-out infinite; }
+  #restTitle { font-size:8vmin; font-weight:900; letter-spacing:1.5vmin; z-index:1; text-shadow:0 .8vmin 1.6vmin rgba(0,0,0,.4); }
+  #restSub { font-size:4.2vmin; opacity:.85; z-index:1; }
+  #restTimer { font-size:15vmin; font-weight:900; z-index:1; font-variant-numeric:tabular-nums;
+    background:rgba(255,255,255,.12); border:.5vmin solid rgba(255,255,255,.25);
+    border-radius:5vmin; padding:.5vmin 6vmin; letter-spacing:.5vmin; }
 </style>
 </head>
 <body>
@@ -207,6 +230,20 @@
   <div class="endStars">⭐⭐⭐</div>
   <div class="endScore" id="winScore">10/10</div>
   <button class="endBtn" id="againBtn">↺</button>
+</div>
+
+<!-- 抖一抖（護眼休息）畫面 -->
+<div id="restScreen">
+  <span class="star" style="top:14%;left:18%">✦</span>
+  <span class="star" style="top:22%;left:78%;font-size:4vmin;animation-delay:.6s">✦</span>
+  <span class="star" style="top:40%;left:10%;animation-delay:1.1s">✦</span>
+  <span class="star" style="top:30%;left:60%;font-size:2.4vmin;animation-delay:1.6s">✦</span>
+  <span class="star" style="top:68%;left:84%;animation-delay:.3s">✦</span>
+  <span class="star" style="top:74%;left:24%;font-size:4vmin;animation-delay:1.3s">✦</span>
+  <div id="restMoon">🌙</div>
+  <div id="restTitle">抖一抖</div>
+  <div id="restSub">合埋眼，休息吓</div>
+  <div id="restTimer">10:00</div>
 </div>
 
 <script>
@@ -431,6 +468,7 @@ function renderHud(){
   $("progress").textContent = "🚩 " + state.idx + "/10";
 }
 function showScreen(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("show")); $(id).classList.add("show"); }
+function setScene(idx){ const sc="sc"+Math.min(4,Math.floor(idx/2)); $("world").className=sc; }
 
 function burstFx(centerEl, emoji, n=6){
   const r = centerEl.getBoundingClientRect();
@@ -444,6 +482,7 @@ function burstFx(centerEl, emoji, n=6){
 /* ---- 行去下一隻怪獸 ---- */
 async function walkToMonster(){
   const girl=$("girl"), monster=$("monster"), sprite=$("monsterSprite"), ground=$("ground"), far=$("bgFar");
+  setScene(state.idx);   // 每兩隻怪獸換背景場景
   sprite.classList.remove("idle","squish");
   monster.style.transition="none"; monster.style.left="106%"; monster.style.opacity="1"; monster.style.transform="";
   sprite.innerHTML = monsterSVG(state.idx);
@@ -535,32 +574,51 @@ async function treasureChest(){
   chest.style.display="none";
 }
 
-/* ---- 終點旗桿（孖寶兄弟過關）---- */
+/* ---- 終點旗桿 + 入城堡（孖寶兄弟過關）---- */
+function worldScroll(on){
+  const m = on ? "add" : "remove";
+  $("girl").classList[m]("walking"); $("ground").classList[m]("scroll"); $("bgFar").classList[m]("scroll");
+  document.querySelectorAll(".cloud").forEach(c=>c.classList[m]("scroll"));
+}
 async function flagpoleSequence(){
-  const girl=$("girl"), flag=$("flag"), ground=$("ground"), far=$("bgFar");
-  flag.innerHTML = flagSVG();
-  flag.style.transition="none"; flag.style.left="120%";
+  const girl=$("girl"), flag=$("flag"), castle=$("castle");
+  flag.innerHTML=flagSVG(); flag.style.transition="none"; flag.style.left="120%";
+  castle.innerHTML=castleSVG(); castle.style.transition="none"; castle.style.left="150%";
   void flag.offsetWidth;
-  girl.classList.add("walking"); ground.classList.add("scroll"); far.classList.add("scroll");
-  document.querySelectorAll(".cloud").forEach(c=>c.classList.add("scroll"));
-  flag.style.transition="left 1.8s linear"; flag.style.left="64%";
-  await wait(1850);
-  girl.classList.remove("walking"); ground.classList.remove("scroll"); far.classList.remove("scroll");
-  document.querySelectorAll(".cloud").forEach(c=>c.classList.remove("scroll"));
-  // 跳上旗桿頂
+  // 行到旗桿（旗桿同城堡一齊捲入）
+  worldScroll(true);
+  flag.style.transition="left 2s linear"; flag.style.left="52%";
+  castle.style.transition="left 2s linear"; castle.style.left="86%";
+  await wait(2050);
+  worldScroll(false);
+  // 跳起捉住旗桿頂
   sfx.jump();
-  girl.animate([{transform:"translate(0,0)"},{transform:"translate(40vmin,-44vmin)"}],{duration:650,easing:"ease-out",fill:"forwards"});
-  await wait(650);
-  // 滑落旗桿
+  girl.animate([{transform:"translate(0,0)"},{transform:"translate(31vmin,-44vmin)"}],{duration:600,easing:"ease-out",fill:"forwards"});
+  await wait(620);
+  // 拉旗落桿 + 沿桿滑到最低點
   const banner=flag.querySelector("#flagBanner");
-  if(banner) banner.animate([{transform:"translateY(40px)"},{transform:"translateY(0)"}],{duration:900,easing:"ease-out",fill:"forwards"});
+  if(banner) banner.animate([{transform:"translateY(44px)"},{transform:"translateY(0)"}],{duration:1000,easing:"ease-out",fill:"forwards"});
   sfx.flag();
-  girl.animate([{transform:"translate(40vmin,-44vmin)"},{transform:"translate(40vmin,0)"}],{duration:1000,easing:"ease-in",fill:"forwards"});
-  await wait(1000);
-  await wait(400);
+  girl.animate([{transform:"translate(31vmin,-44vmin)"},{transform:"translate(31vmin,0)"}],{duration:1050,easing:"ease-in",fill:"forwards"});
+  await wait(1100);
+  // 細跳一下離開旗桿
+  sfx.jump();
+  girl.animate([{transform:"translate(31vmin,0)"},{transform:"translate(35vmin,-9vmin)",offset:.5},{transform:"translate(37vmin,0)"}],{duration:480,easing:"ease-out",fill:"forwards"});
+  await wait(520);
   speak("過關喇，好叻呀！");
-  burstFx(girl,"🎉",10);
-  await wait(700);
+  await wait(350);
+  // 繼續向右行入城堡（世界捲動，城堡門埋到嚟）
+  worldScroll(true);
+  flag.style.transition="left 1.9s linear"; flag.style.left="-30%";
+  castle.style.transition="left 1.9s linear"; castle.style.left="30%";
+  await wait(1950);
+  worldScroll(false);
+  // 入門：縮細淡出
+  sfx.jump();
+  girl.animate([{transform:"translate(37vmin,0) scale(1)",opacity:1},{transform:"translate(44vmin,1vmin) scale(.5)",opacity:0}],{duration:560,easing:"ease-in",fill:"forwards"});
+  await wait(600);
+  sfx.win(); burstFx(castle,"🎉",12);
+  await wait(800);
   showWin();
 }
 
@@ -568,6 +626,7 @@ async function runGame(){
   state.hearts=3; state.idx=0; state.gear=0; state.dead=false; state.busy=false;
   renderHud();
   showScreen("gameScreen");
+  setScene(0);
   $("girl").innerHTML = girlSVG(0);
   $("girl").style.transform="";
   $("monster").style.opacity="1"; $("monster").style.left="106%";
@@ -603,11 +662,34 @@ function showWin(){
   showScreen("winScreen");
 }
 
+/* ================= 遊玩時間限制：玩10分鐘 抖10分鐘（全平台共用記錄）================= */
+const LIMIT_PLAY = 10*60*1000, LIMIT_REST = 10*60*1000;
+let playMs=0, restUntil=0, lastTick=0, engaged=false;
+try { playMs=Number(localStorage.getItem("wg_playMs"))||0; restUntil=Number(localStorage.getItem("wg_restUntil"))||0; }catch(e){}
+function fmtTime(ms){ const s=Math.max(0,Math.ceil(ms/1000)); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); }
+function inRest(){ return restUntil>Date.now(); }
+function enterRest(){ try{speechSynthesis.cancel();}catch(e){} $("restScreen").classList.add("show"); $("restTimer").textContent=fmtTime(restUntil-Date.now()); speak("玩咗好耐喇，抖一抖，合埋眼休息吓，等陣再玩啦"); }
+function endRest(){ $("restScreen").classList.remove("show"); playMs=0; restUntil=0; lastTick=0; engaged=false;
+  try{localStorage.setItem("wg_playMs","0"); localStorage.removeItem("wg_restUntil");}catch(e){} showScreen("startScreen"); }
+function timeTick(){
+  const now=Date.now();
+  if(inRest()){ if(!$("restScreen").classList.contains("show")) enterRest(); $("restTimer").textContent=fmtTime(restUntil-now); return; }
+  if($("restScreen").classList.contains("show")){ endRest(); return; }
+  if(engaged && document.visibilityState==="visible"){
+    if(lastTick) playMs+=now-lastTick; lastTick=now;
+    try{localStorage.setItem("wg_playMs",String(playMs));}catch(e){}
+    if(playMs>=LIMIT_PLAY){ restUntil=now+LIMIT_REST; try{localStorage.setItem("wg_restUntil",String(restUntil));}catch(e){} enterRest(); }
+  } else { lastTick=now; }
+}
+setInterval(timeTick,1000);
+document.addEventListener("visibilitychange", ()=>{ lastTick=0; });
+if(inRest()) enterRest();
+
 /* ================= 事件 ================= */
-$("startHero").innerHTML = girlSVG();
-$("playBtn").addEventListener("click", ()=>{ audioInit(); runGame(); });
-$("retryBtn").addEventListener("click", ()=>{ audioInit(); runGame(); });
-$("againBtn").addEventListener("click", ()=>{ audioInit(); runGame(); });
+$("startHero").innerHTML = girlSVG(0);
+$("playBtn").addEventListener("click", ()=>{ if(inRest()) return; audioInit(); engaged=true; lastTick=Date.now(); runGame(); });
+$("retryBtn").addEventListener("click", ()=>{ if(inRest()) return; audioInit(); engaged=true; lastTick=Date.now(); runGame(); });
+$("againBtn").addEventListener("click", ()=>{ if(inRest()) return; audioInit(); engaged=true; lastTick=Date.now(); runGame(); });
 document.addEventListener("gesturestart", e=>e.preventDefault());
 document.addEventListener("contextmenu", e=>e.preventDefault());
 </script>

@@ -116,6 +116,18 @@
   #flag { position:absolute; left:140%; bottom:18%; width:8vmin; height:62%; z-index:14; }
   #flag svg { width:100%; height:100%; overflow:visible; }
 
+  /* 城堡 */
+  #castle { position:absolute; left:160%; bottom:18%; width:40vmin; height:42%; z-index:12; }
+  #castle svg { width:100%; height:100%; overflow:visible; }
+
+  /* 寶箱 */
+  #chest { position:absolute; left:34%; bottom:18%; width:18vmin; height:17vmin; z-index:19; display:none; }
+  #chest svg { width:100%; height:100%; overflow:visible; }
+  #chest .lid { transform-box:fill-box; transform-origin:50% 100%; transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+  #chest.open .lid { transform:translateY(-14%) rotate(-22deg); }
+  #chest .glow { opacity:0; transition:opacity .35s; }
+  #chest.open .glow { opacity:1; }
+
   /* 飛出特效 */
   .fx { position:fixed; z-index:50; font-size:8vmin; line-height:1; pointer-events:none; }
 
@@ -168,10 +180,12 @@
     <div class="cloud cl2"></div>
     <div id="ground"></div>
     <div id="flag"></div>
+    <div id="castle"></div>
     <div id="monster">
       <div id="qBubble"><span id="qText">1＋1</span></div>
       <div id="monsterSprite"></div>
     </div>
+    <div id="chest"></div>
     <div id="girl"></div>
   </div>
   <div id="choices">
@@ -202,52 +216,88 @@ const wait = ms => new Promise(r=>setTimeout(r,ms));
 const raf = () => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 const rand = (a,b) => a + Math.floor(Math.random()*(b-a+1));
 
-/* ================= 側面小女孩（向右行） ================= */
-function girlSVG(){
+/* ================= 側面小女孩（向右行，gear 0-5 加裝備） ================= */
+let _gid = 0;
+function girlSVG(gear){
+  gear = gear || 0;
+  const u = "g"+(_gid++);
   const skin="#ffd9b3", skinD="#e8ab7c", dressD="#d6457a";
-  return `<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="gsk" cx="55%" cy="38%" r="68%"><stop offset="0" stop-color="#ffe8d4"/><stop offset="1" stop-color="${skin}"/></radialGradient>
-      <linearGradient id="gdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fb0"/><stop offset="1" stop-color="${dressD}"/></linearGradient>
-      <linearGradient id="gha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d5630"/><stop offset="1" stop-color="#4a2f17"/></linearGradient>
-    </defs>
-    <ellipse cx="52" cy="123" rx="24" ry="4.5" fill="rgba(0,0,0,.16)"/>
-    <!-- 後孖辮 + 蝴蝶結 -->
-    <g>
-      <circle cx="27" cy="44" r="7.5" fill="url(#gha)" stroke="#3a2511" stroke-width="1.4"/>
-      <circle cx="23" cy="55" r="6.6" fill="url(#gha)" stroke="#3a2511" stroke-width="1.4"/>
-      <circle cx="22" cy="65" r="5.4" fill="url(#gha)" stroke="#3a2511" stroke-width="1.4"/>
-      <path d="M30 35 L19 31 Q16 36 19 41 Z" fill="#ff5f85" stroke="#d12d5c" stroke-width="1.2"/>
-      <path d="M30 35 L21 42 Q26 45 31 41 Z" fill="#ff6f92" stroke="#d12d5c" stroke-width="1.2"/>
-      <circle cx="30" cy="37" r="3" fill="#e03060"/>
-    </g>
-    <!-- 後腳 -->
-    <g class="legB"><rect x="45" y="88" width="8" height="26" rx="4" fill="${skinD}"/><path d="M40 112 h13 q5 0 5 4.2 t-5 4.2 h-13 q-2 0 -2 -4.2 Z" fill="#b8395d"/></g>
-    <!-- 連身裙 -->
-    <path d="M35 58 Q52 53 67 58 L73 93 Q52 100 31 93 Z" fill="url(#gdr)" stroke="${dressD}" stroke-width="2.5"/>
-    <path d="M44 60 L40 91 M58 60 L62 91" stroke="rgba(150,40,80,.18)" stroke-width="2"/>
-    <path d="M32 90 Q52 97 72 90 L73 93 Q52 100 31 93 Z" fill="rgba(255,255,255,.42)"/>
-    <!-- 前腳 -->
-    <g class="legF"><rect x="53" y="88" width="8" height="27" rx="4" fill="${skin}"/><path d="M48 114 h14 q5 0 5 4.3 t-5 4.3 h-14 q-2 0 -2 -4.3 Z" fill="${dressD}"/><ellipse cx="55" cy="116" rx="2.2" ry="1.3" fill="rgba(255,255,255,.55)"/></g>
-    <!-- 前泡泡袖 + 手 -->
-    <circle cx="62" cy="60" r="5.5" fill="url(#gdr)" stroke="${dressD}" stroke-width="1.5"/>
-    <g class="armF"><path d="M62 62 Q71 70 67 82" stroke="${skin}" stroke-width="7" fill="none" stroke-linecap="round"/></g>
-    <!-- 頭髮（後腦勺）-->
-    <circle cx="47" cy="35" r="22" fill="url(#gha)"/>
-    <!-- 面 -->
-    <circle cx="54" cy="35" r="19.5" fill="url(#gsk)"/>
-    <!-- 鼻 -->
-    <path d="M72.5 34 q4.5 3 0 6" stroke="${skinD}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <!-- 瀏海 -->
-    <path d="M34 36 Q34 16 54 15 Q74 16 74 35 Q68 28 62 32 Q56 26 50 32 Q44 26 39 32 Q35 29 34 36 Z" fill="url(#gha)"/>
-    <!-- 眼 + 睫毛 + 眉 -->
-    <path d="M57 26.5 Q62 24.5 66 27" stroke="#4a2f17" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <ellipse cx="62" cy="34" rx="4.2" ry="4.8" fill="#3a2a1a"/><circle cx="63.4" cy="32.2" r="1.5" fill="#fff"/>
-    <path d="M56.5 30 L54.5 28.4" stroke="#4a2f17" stroke-width="1.6" stroke-linecap="round"/>
-    <!-- 腮紅 + 嘴 -->
-    <ellipse cx="58" cy="43" rx="4.2" ry="2.7" fill="#ff9cb0" opacity=".8"/>
-    <path d="M65 45 Q69 48.5 72 44.5 Q69 47 67 46.5 Q66 46.5 65 45 Z" fill="#d2604a"/>
-  </svg>`;
+  const P = [];
+  P.push(`<defs>`+
+    `<radialGradient id="${u}sk" cx="55%" cy="38%" r="68%"><stop offset="0" stop-color="#ffe8d4"/><stop offset="1" stop-color="${skin}"/></radialGradient>`+
+    `<linearGradient id="${u}dr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fb0"/><stop offset="1" stop-color="${dressD}"/></linearGradient>`+
+    `<linearGradient id="${u}ha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d5630"/><stop offset="1" stop-color="#4a2f17"/></linearGradient>`+
+    `<linearGradient id="${u}me" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f8fb"/><stop offset=".55" stop-color="#c6d3df"/><stop offset="1" stop-color="#98aabb"/></linearGradient>`+
+    `<linearGradient id="${u}go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#d8921e"/></linearGradient>`+
+    `<linearGradient id="${u}ca" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f25c5c"/><stop offset="1" stop-color="#ad1d1d"/></linearGradient>`+
+    `<radialGradient id="${u}shd" cx="40%" cy="32%" r="80%"><stop offset="0" stop-color="#6fb0f5"/><stop offset="1" stop-color="#2c5aa8"/></radialGradient>`+
+  `</defs>`);
+  P.push(`<ellipse cx="52" cy="123" rx="24" ry="4.5" fill="rgba(0,0,0,.16)"/>`);
+  // 披風（gear>=5，飄喺身後）
+  if(gear>=5) P.push(`<path d="M41 58 Q13 74 21 106 L41 101 Q33 78 51 64 Z" fill="url(#${u}ca)" stroke="#8e1717" stroke-width="2"/>`,
+    `<path d="M34 70 Q30 88 27 100" stroke="rgba(110,10,10,.35)" stroke-width="1.8" fill="none"/>`);
+  // 後孖辮 + 蝴蝶結
+  P.push(`<g>`+
+    `<circle cx="27" cy="44" r="7.5" fill="url(#${u}ha)" stroke="#3a2511" stroke-width="1.4"/>`+
+    `<circle cx="23" cy="55" r="6.6" fill="url(#${u}ha)" stroke="#3a2511" stroke-width="1.4"/>`+
+    `<circle cx="22" cy="65" r="5.4" fill="url(#${u}ha)" stroke="#3a2511" stroke-width="1.4"/>`+
+    `<path d="M30 35 L19 31 Q16 36 19 41 Z" fill="#ff5f85" stroke="#d12d5c" stroke-width="1.2"/>`+
+    `<path d="M30 35 L21 42 Q26 45 31 41 Z" fill="#ff6f92" stroke="#d12d5c" stroke-width="1.2"/>`+
+    `<circle cx="30" cy="37" r="3" fill="#e03060"/></g>`);
+  // 圓盾（gear>=2，背喺後肩）
+  if(gear>=2) P.push(`<g>`+
+    `<ellipse cx="33" cy="70" rx="11" ry="13" fill="url(#${u}go)" stroke="#b8892a" stroke-width="2"/>`+
+    `<ellipse cx="33" cy="70" rx="7.6" ry="9.6" fill="url(#${u}shd)"/>`+
+    `<path d="M33 63 l1.5 4 l4.3 .3 l-3.3 2.8 l1 4.2 l-3.5-2.3 l-3.5 2.3 l1-4.2 l-3.3-2.8 l4.3-.3 Z" fill="#ffd34d"/></g>`);
+  // 後腳
+  P.push(`<g class="legB"><rect x="45" y="88" width="8" height="26" rx="4" fill="${skinD}"/><path d="M40 112 h13 q5 0 5 4.2 t-5 4.2 h-13 q-2 0 -2 -4.2 Z" fill="#b8395d"/></g>`);
+  // 連身裙
+  P.push(`<path d="M35 58 Q52 53 67 58 L73 93 Q52 100 31 93 Z" fill="url(#${u}dr)" stroke="${dressD}" stroke-width="2.5"/>`);
+  P.push(`<path d="M44 60 L40 91 M58 60 L62 91" stroke="rgba(150,40,80,.18)" stroke-width="2"/>`);
+  P.push(`<path d="M32 90 Q52 97 72 90 L73 93 Q52 100 31 93 Z" fill="rgba(255,255,255,.42)"/>`);
+  // 盔甲（gear>=3，胸甲）
+  if(gear>=3) P.push(`<path d="M37 57 Q52 53 67 57 L70 76 Q52 83 34 76 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="2"/>`,
+    `<path d="M52 56 L52 80" stroke="rgba(90,110,130,.4)" stroke-width="1.5"/>`,
+    `<path d="M35 75 Q52 82 69 75" stroke="#d8921e" stroke-width="2" fill="none"/>`,
+    `<circle cx="44" cy="65" r="1.6" fill="#7d8da0"/><circle cx="60" cy="65" r="1.6" fill="#7d8da0"/>`);
+  // 前腳
+  P.push(`<g class="legF"><rect x="53" y="88" width="8" height="27" rx="4" fill="${skin}"/><path d="M48 114 h14 q5 0 5 4.3 t-5 4.3 h-14 q-2 0 -2 -4.3 Z" fill="${dressD}"/><ellipse cx="55" cy="116" rx="2.2" ry="1.3" fill="rgba(255,255,255,.55)"/></g>`);
+  // 前泡泡袖
+  P.push(`<circle cx="62" cy="60" r="5.5" fill="url(#${u}dr)" stroke="${dressD}" stroke-width="1.5"/>`);
+  if(gear>=1){
+    // 攞劍嘅手舉起向前（唔擺動）
+    P.push(`<path d="M62 62 Q72 56 79 47" stroke="${skin}" stroke-width="7" fill="none" stroke-linecap="round"/>`);
+    P.push(`<g transform="rotate(10 80 46)">`+
+      `<path d="M77 47 L77 17 L80 9 L83 17 L83 47 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="1.4"/>`+
+      `<path d="M80 13 L80 45" stroke="rgba(255,255,255,.6)" stroke-width="1"/>`+
+      `<rect x="72" y="46" width="16" height="4.6" rx="2.3" fill="url(#${u}go)" stroke="#b8892a" stroke-width="1.2"/>`+
+      `<rect x="78" y="50.6" width="4" height="8" rx="1.8" fill="#8a5a2b"/>`+
+      `<circle cx="80" cy="59.5" r="2.8" fill="url(#${u}go)" stroke="#b8892a" stroke-width="1"/>`+
+      `<circle cx="80" cy="49.5" r="4" fill="${skin}" stroke="${skinD}" stroke-width="1.2"/></g>`);
+  } else {
+    P.push(`<g class="armF"><path d="M62 62 Q71 70 67 82" stroke="${skin}" stroke-width="7" fill="none" stroke-linecap="round"/></g>`);
+  }
+  // 頭髮（後腦勺）
+  P.push(`<circle cx="47" cy="35" r="22" fill="url(#${u}ha)"/>`);
+  // 面
+  P.push(`<circle cx="54" cy="35" r="19.5" fill="url(#${u}sk)"/>`);
+  // 鼻
+  P.push(`<path d="M72.5 34 q4.5 3 0 6" stroke="${skinD}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`);
+  // 瀏海
+  P.push(`<path d="M34 36 Q34 16 54 15 Q74 16 74 35 Q68 28 62 32 Q56 26 50 32 Q44 26 39 32 Q35 29 34 36 Z" fill="url(#${u}ha)"/>`);
+  // 頭盔（gear>=4，蓋頭頂，留返塊面）
+  if(gear>=4) P.push(`<path d="M33 33 Q33 11 54 11 Q76 11 76 33 L76 30 Q66 24 54 27 Q42 24 33 30 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="2"/>`,
+    `<path d="M54 11 Q49 1 54 -1 Q59 1 56 11 Z" fill="url(#${u}ca)" stroke="#8e1717" stroke-width="1.4"/>`,
+    `<rect x="33" y="27.5" width="43" height="4.4" rx="2.2" fill="url(#${u}go)" stroke="#b8892a" stroke-width="1.2"/>`);
+  // 眉（冇頭盔先畫）
+  if(gear<4) P.push(`<path d="M57 26.5 Q62 24.5 66 27" stroke="#4a2f17" stroke-width="1.8" fill="none" stroke-linecap="round"/>`);
+  // 眼 + 睫毛
+  P.push(`<ellipse cx="62" cy="34" rx="4.2" ry="4.8" fill="#3a2a1a"/><circle cx="63.4" cy="32.2" r="1.5" fill="#fff"/>`);
+  P.push(`<path d="M56.5 30 L54.5 28.4" stroke="#4a2f17" stroke-width="1.6" stroke-linecap="round"/>`);
+  // 腮紅 + 嘴
+  P.push(`<ellipse cx="58" cy="43" rx="4.2" ry="2.7" fill="#ff9cb0" opacity=".8"/>`);
+  P.push(`<path d="M65 45 Q69 48.5 72 44.5 Q69 47 67 46.5 Q66 46.5 65 45 Z" fill="#d2604a"/>`);
+  return `<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg">${P.join("")}</svg>`;
 }
 
 /* ================= 側面怪獸（面向左） ================= */
@@ -294,6 +344,45 @@ function flagSVG(){
   </svg>`;
 }
 
+/* ================= 寶箱 ================= */
+function chestSVG(){
+  return `<svg viewBox="0 0 100 92" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="86" rx="33" ry="5" fill="rgba(0,0,0,.18)"/>
+    <ellipse class="glow" cx="50" cy="44" rx="30" ry="18" fill="#fff3a8"/>
+    <rect x="20" y="46" width="60" height="34" rx="5" fill="#a86a3a" stroke="#7a4a24" stroke-width="2.5"/>
+    <rect x="20" y="54" width="60" height="6" fill="#e8b93c"/>
+    <rect x="44" y="46" width="12" height="34" fill="#e8b93c" stroke="#b8892a" stroke-width="1"/>
+    <rect x="45" y="60" width="10" height="9" rx="1.5" fill="#8a5a2b"/><circle cx="50" cy="64.5" r="1.6" fill="#3a2511"/>
+    <g class="lid">
+      <path d="M19 47 Q19 26 50 26 Q81 26 81 47 Z" fill="#b87842" stroke="#7a4a24" stroke-width="2.5"/>
+      <rect x="44" y="30" width="12" height="17" fill="#e8b93c" stroke="#b8892a" stroke-width="1"/>
+      <path d="M24 38 Q36 30 50 30" stroke="rgba(255,255,255,.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+}
+
+/* ================= 城堡 ================= */
+function castleSVG(){
+  return `<svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYEnd meet">
+    <defs><linearGradient id="cst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd6dc"/><stop offset="1" stop-color="#9fa8b0"/></linearGradient></defs>
+    <rect x="10" y="40" width="100" height="86" fill="url(#cst)" stroke="#7d8590" stroke-width="2"/>
+    <!-- 城垛 -->
+    <g fill="url(#cst)" stroke="#7d8590" stroke-width="2">
+      <rect x="8" y="30" width="12" height="14"/><rect x="28" y="30" width="12" height="14"/><rect x="48" y="30" width="12" height="14"/><rect x="68" y="30" width="12" height="14"/><rect x="88" y="30" width="12" height="14"/><rect x="100" y="30" width="12" height="14"/>
+    </g>
+    <!-- 兩側塔 -->
+    <rect x="0" y="20" width="22" height="106" fill="url(#cst)" stroke="#7d8590" stroke-width="2"/>
+    <rect x="98" y="20" width="22" height="106" fill="url(#cst)" stroke="#7d8590" stroke-width="2"/>
+    <path d="M-2 20 L11 4 L24 20 Z" fill="#e23b3b" stroke="#a32424" stroke-width="1.5"/>
+    <path d="M96 20 L109 4 L122 20 Z" fill="#e23b3b" stroke="#a32424" stroke-width="1.5"/>
+    <!-- 大門 -->
+    <path d="M48 126 L48 80 Q60 68 72 80 L72 126 Z" fill="#6b4423" stroke="#4a2f17" stroke-width="2"/>
+    <path d="M60 80 L60 126 M50 90 Q60 82 70 90 M50 104 L70 104" stroke="#4a2f17" stroke-width="1.5" fill="none"/>
+    <!-- 窗 -->
+    <rect x="6" y="44" width="10" height="16" rx="5" fill="#3a5168"/><rect x="104" y="44" width="10" height="16" rx="5" fill="#3a5168"/>
+  </svg>`;
+}
+
 /* ================= 聲音 ================= */
 let actx=null;
 function audioInit(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==="suspended") actx.resume(); }
@@ -335,7 +424,7 @@ function makeQuestion(i){
 
 /* ================= 遊戲狀態 ================= */
 const ENCOUNTER = "58%";
-const state = { hearts:3, idx:0, dead:false, busy:false };
+const state = { hearts:3, idx:0, gear:0, dead:false, busy:false };
 
 function renderHud(){
   $("hearts").textContent = "❤️".repeat(state.hearts) + "🤍".repeat(3-state.hearts);
@@ -423,6 +512,29 @@ async function defeatAndJump(){
   state.idx++; renderHud();
 }
 
+/* ---- 寶箱：執到一件裝備 ---- */
+const GEAR_NAME = ["執到把劍","執到個盾","執到件盔甲","執到個頭盔","執到件披風"];
+async function treasureChest(){
+  state.gear++;
+  const chest=$("chest"), girl=$("girl");
+  chest.innerHTML = chestSVG(); chest.classList.remove("open"); chest.style.display="block";
+  chest.animate([{transform:"translateY(20vmin) scale(.5)",opacity:0},{transform:"translateY(0) scale(1)",opacity:1}],{duration:420,easing:"cubic-bezier(.34,1.56,.64,1)",fill:"forwards"});
+  sfx.jump();
+  await wait(480);
+  chest.animate([{transform:"rotate(0)"},{transform:"rotate(-5deg)"},{transform:"rotate(5deg)"},{transform:"rotate(-3deg)"},{transform:"rotate(0)"}],{duration:380});
+  await wait(420);
+  chest.classList.add("open"); sfx.right(); burstFx(chest,"✨",10);
+  await wait(420);
+  girl.innerHTML = girlSVG(state.gear);
+  girl.animate([{transform:"scale(1)"},{transform:"scale(1.14)"},{transform:"scale(1)"}],{duration:480});
+  burstFx(girl,"⭐",6);
+  speak(GEAR_NAME[state.gear-1] || "執到裝備");
+  await wait(900);
+  chest.animate([{transform:"translateY(0) scale(1)",opacity:1},{transform:"translateY(16vmin) scale(.5)",opacity:0}],{duration:340,easing:"ease-in",fill:"forwards"});
+  await wait(380);
+  chest.style.display="none";
+}
+
 /* ---- 終點旗桿（孖寶兄弟過關）---- */
 async function flagpoleSequence(){
   const girl=$("girl"), flag=$("flag"), ground=$("ground"), far=$("bgFar");
@@ -453,13 +565,15 @@ async function flagpoleSequence(){
 }
 
 async function runGame(){
-  state.hearts=3; state.idx=0; state.dead=false; state.busy=false;
+  state.hearts=3; state.idx=0; state.gear=0; state.dead=false; state.busy=false;
   renderHud();
   showScreen("gameScreen");
-  $("girl").innerHTML = girlSVG();
+  $("girl").innerHTML = girlSVG(0);
   $("girl").style.transform="";
   $("monster").style.opacity="1"; $("monster").style.left="106%";
-  $("flag").style.left="120%"; $("flag").innerHTML="";
+  $("flag").style.left="140%"; $("flag").innerHTML="";
+  $("castle").style.left="160%"; $("castle").innerHTML="";
+  $("chest").style.display="none";
   await wait(300);
   while(state.idx < 10){
     state.busy=false;
@@ -468,6 +582,8 @@ async function runGame(){
     const ok = await askQuestion(q);
     if(!ok || state.dead){ await gameOver(); return; }
     await defeatAndJump();
+    // 每打贏兩隻怪獸開一個寶箱（共 5 件裝備）
+    if(state.idx % 2 === 0 && state.gear < 5){ await treasureChest(); }
   }
   await flagpoleSequence();
 }

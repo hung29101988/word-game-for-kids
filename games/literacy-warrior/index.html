@@ -123,21 +123,25 @@
     transition: width .6s ease, background .6s ease; }
   #plyHearts { font-size:4vmin; letter-spacing:.5vmin; }
 
-  /* 出招泡泡 */
+  /* 出招泡泡（怪獸講嘢嘅對話框）*/
   #bubble {
-    position:absolute; left:50%; top:40%; transform:translate(-50%,-50%) scale(0);
+    position:absolute; left:48%; top:42%; transform:translate(-50%,-50%) scale(0);
     background:#fff; border:.8vmin solid #5b4a32; border-radius:6vmin;
     padding:2vmin 3vmin; display:flex; align-items:center; gap:2vmin;
-    box-shadow:0 1.2vmin 0 rgba(0,0,0,.15); z-index:5;
-    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 1.2vmin 0 rgba(0,0,0,.15); z-index:5; cursor:pointer;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
   }
   #bubble.show { transform:translate(-50%,-50%) scale(1); }
-  #bubble::after { content:""; position:absolute; right:-3.4vmin; top:30%;
-    border:2vmin solid transparent; border-left-color:#5b4a32; }
-  #bubbleIcon { font-size:19vmin; line-height:1; }
+  #bubble.show:active { transform:translate(-50%,-50%) scale(.96); }
+  /* 對話尾巴：旋轉方塊，白底＋兩邊啡邊，指向右上方嘅怪獸 */
+  #bubble::after { content:""; position:absolute; right:8vmin; top:-1.9vmin;
+    width:4.4vmin; height:4.4vmin; background:#fff;
+    border-top:.8vmin solid #5b4a32; border-right:.8vmin solid #5b4a32;
+    border-top-right-radius:.8vmin; transform:rotate(48deg); }
+  #bubbleIcon { font-size:19vmin; line-height:1; pointer-events:none; }
   #speakBtn { border:none; background:#ffe9b3; border-radius:50%; width:5.5vmin; height:5.5vmin;
-    font-size:3vmin; cursor:pointer; box-shadow:0 .5vmin 0 #d8b96a; align-self:flex-end; }
-  #speakBtn:active { transform:translateY(.5vmin); box-shadow:none; }
+    font-size:3vmin; cursor:pointer; box-shadow:0 .5vmin 0 #d8b96a; align-self:flex-end;
+    pointer-events:none; }
 
   /* 自訂 SVG 圖示（跟字體大小縮放） */
   .icn { width:1.3em; height:1em; display:inline-block; vertical-align:middle; overflow:visible; }
@@ -967,7 +971,8 @@ $("titleHero").innerHTML = girlSVG(0);
 
 $("playBtn").addEventListener("click", ()=>{ if(inRest()) return; audioInit(); speak("開始"); newGame(); });
 $("againBtn").addEventListener("click", ()=>{ if(inRest()) return; audioInit(); newGame(); });
-$("speakBtn").addEventListener("click", e=>{ e.stopPropagation(); speak(state.word); });
+// 撳對話框任何地方都重播語音
+$("bubble").addEventListener("click", ()=>{ if(state.word) speak(state.word); });
 document.querySelectorAll(".choice").forEach(b=>b.addEventListener("click", ()=>answer(b)));
 
 // 防止 iPad 雙擊縮放／長按選字

@@ -119,18 +119,17 @@
 
   /* ===== 答案掣 ===== */
   #choices {
-    flex:1; display:grid; grid-template-columns:1fr 1fr; gap:2.4vmin;
-    padding:2.4vmin; background:#fff7e0;
+    flex:1; display:grid; grid-template-columns:1fr 1fr; gap:2.8vmin;
+    padding:2.8vmin; background:#fff7e0;
   }
   .choice {
     border:none; border-radius:4vmin; cursor:pointer;
     font-family:inherit; font-weight:900; color:#4a3a26;
-    font-size:clamp(28px, 11vmin, 110px);
+    font-size:clamp(36px, 15vmin, 150px);
     box-shadow:0 1.2vmin 0 rgba(0,0,0,.18);
     transition: transform .1s;
   }
   .choice:nth-child(1){ background:#ffd6d6; } .choice:nth-child(2){ background:#d6e8ff; }
-  .choice:nth-child(3){ background:#d9f7d0; } .choice:nth-child(4){ background:#fdeeb5; }
   .choice:active { transform:translateY(.8vmin); box-shadow:0 .4vmin 0 rgba(0,0,0,.18); }
   .choice.right { background:#43d36b !important; color:#fff;
     animation: rightPulse .5s ease 2; }
@@ -236,8 +235,6 @@
   </div>
 
   <div id="choices">
-    <button class="choice"></button>
-    <button class="choice"></button>
     <button class="choice"></button>
     <button class="choice"></button>
   </div>
@@ -668,7 +665,7 @@ function nextQuestion(){
 
   // 四個選項
   const pool = LEVELS[state.level].pool.map(p=>p[0]).filter(w=>w!==word);
-  const opts = shuffle([word, ...shuffle(pool).slice(0,3)]);
+  const opts = shuffle([word, ...shuffle(pool).slice(0,1)]);
   document.querySelectorAll(".choice").forEach((b,i)=>{
     b.textContent = opts[i];
     b.className = "choice";

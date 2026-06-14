@@ -303,7 +303,7 @@ function girlSVG(gear){
   P.push(`<circle cx="62" cy="60" r="5.5" fill="url(#${u}dr)" stroke="${dressD}" stroke-width="1.5"/>`);
   if(gear>=1){
     // 攞劍嘅手舉起向前（唔擺動）
-    P.push(`<path d="M62 62 Q72 56 79 47" stroke="${skin}" stroke-width="7" fill="none" stroke-linecap="round"/>`);
+    P.push(`<path d="M62 62 Q72 56 79 47" stroke="${skin}" stroke-width="6.5" fill="none" stroke-linecap="round"/>`);
     P.push(`<g transform="rotate(10 80 46)">`+
       `<path d="M77 47 L77 17 L80 9 L83 17 L83 47 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="1.4"/>`+
       `<path d="M80 13 L80 45" stroke="rgba(255,255,255,.6)" stroke-width="1"/>`+
@@ -312,7 +312,7 @@ function girlSVG(gear){
       `<circle cx="80" cy="59.5" r="2.8" fill="url(#${u}go)" stroke="#b8892a" stroke-width="1"/>`+
       `<circle cx="80" cy="49.5" r="4" fill="${skin}" stroke="${skinD}" stroke-width="1.2"/></g>`);
   } else {
-    P.push(`<g class="armF"><path d="M62 62 Q71 70 67 82" stroke="${skin}" stroke-width="7" fill="none" stroke-linecap="round"/></g>`);
+    P.push(`<g class="armF"><path d="M62 62 Q66.5 71 64.5 80" stroke="${skin}" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="64.5" cy="81" r="3.4" fill="${skin}" stroke="${skinD}" stroke-width=".8"/></g>`);
   }
   // 頭髮（後腦勺）
   P.push(`<circle cx="47" cy="35" r="22" fill="url(#${u}ha)"/>`);
@@ -326,14 +326,56 @@ function girlSVG(gear){
   if(gear>=4) P.push(`<path d="M33 33 Q33 11 54 11 Q76 11 76 33 L76 30 Q66 24 54 27 Q42 24 33 30 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="2"/>`,
     `<path d="M54 11 Q49 1 54 -1 Q59 1 56 11 Z" fill="url(#${u}ca)" stroke="#8e1717" stroke-width="1.4"/>`,
     `<rect x="33" y="27.5" width="43" height="4.4" rx="2.2" fill="url(#${u}go)" stroke="#b8892a" stroke-width="1.2"/>`);
-  // 眉（冇頭盔先畫）
-  if(gear<4) P.push(`<path d="M57 26.5 Q62 24.5 66 27" stroke="#4a2f17" stroke-width="1.8" fill="none" stroke-linecap="round"/>`);
-  // 眼 + 睫毛
-  P.push(`<ellipse cx="62" cy="34" rx="4.2" ry="4.8" fill="#3a2a1a"/><circle cx="63.4" cy="32.2" r="1.5" fill="#fff"/>`);
-  P.push(`<path d="M56.5 30 L54.5 28.4" stroke="#4a2f17" stroke-width="1.6" stroke-linecap="round"/>`);
+  // 眉（幼細、貼近眼；冇頭盔先畫）
+  if(gear<4) P.push(`<path d="M58.5 28.2 Q61.8 26.9 65 28.4" stroke="#6b4423" stroke-width="1.4" fill="none" stroke-linecap="round"/>`);
+  // 眼 + 高光 + 睫毛
+  P.push(`<ellipse cx="62" cy="34.2" rx="4" ry="4.5" fill="#3a2a1a"/><circle cx="63.4" cy="32.4" r="1.4" fill="#fff"/><circle cx="60.8" cy="35.8" r=".7" fill="rgba(255,255,255,.55)"/>`);
+  P.push(`<path d="M56.8 31 L54.8 29.6" stroke="#5a3a22" stroke-width="1.4" stroke-linecap="round"/>`);
   // 腮紅 + 嘴
-  P.push(`<ellipse cx="58" cy="43" rx="4.2" ry="2.7" fill="#ff9cb0" opacity=".8"/>`);
-  P.push(`<path d="M65 45 Q69 48.5 72 44.5 Q69 47 67 46.5 Q66 46.5 65 45 Z" fill="#d2604a"/>`);
+  P.push(`<ellipse cx="57.5" cy="42.5" rx="4" ry="2.6" fill="#ff9cb0" opacity=".8"/>`);
+  P.push(`<path d="M63 45 Q66.5 48 69.5 44.8 Q66.5 46.6 64.5 46.3 Q63.6 46.3 63 45 Z" fill="#d2604a"/>`);
+  return `<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg">${P.join("")}</svg>`;
+}
+
+/* ================= 背向玩家嘅小女孩（入城堡用） ================= */
+function backGirlSVG(gear){
+  gear = gear || 0;
+  const u = "b"+(_gid++);
+  const skin="#ffd9b3", skinD="#e8ab7c", dressD="#d6457a";
+  const P=[];
+  P.push(`<defs>`+
+    `<linearGradient id="${u}dr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fb0"/><stop offset="1" stop-color="${dressD}"/></linearGradient>`+
+    `<linearGradient id="${u}ha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d5630"/><stop offset="1" stop-color="#4a2f17"/></linearGradient>`+
+    `<linearGradient id="${u}me" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f8fb"/><stop offset=".55" stop-color="#c6d3df"/><stop offset="1" stop-color="#98aabb"/></linearGradient>`+
+    `<linearGradient id="${u}go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#d8921e"/></linearGradient>`+
+    `<linearGradient id="${u}ca" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f25c5c"/><stop offset="1" stop-color="#ad1d1d"/></linearGradient>`+
+    `<radialGradient id="${u}shd" cx="40%" cy="32%" r="80%"><stop offset="0" stop-color="#6fb0f5"/><stop offset="1" stop-color="#2c5aa8"/></radialGradient>`+
+  `</defs>`);
+  P.push(`<ellipse cx="50" cy="123" rx="22" ry="4.5" fill="rgba(0,0,0,.16)"/>`);
+  // 雙腳
+  P.push(`<g class="legB"><rect x="40" y="88" width="8.5" height="26" rx="4" fill="${skinD}"/><ellipse cx="44" cy="115" rx="7" ry="3.6" fill="#b8395d"/></g>`);
+  P.push(`<g class="legF"><rect x="51.5" y="88" width="8.5" height="26" rx="4" fill="${skin}"/><ellipse cx="56" cy="115" rx="7" ry="3.6" fill="${dressD}"/></g>`);
+  // 裙背
+  P.push(`<path d="M34 58 Q50 53 66 58 L72 95 Q50 102 28 95 Z" fill="url(#${u}dr)" stroke="${dressD}" stroke-width="2.5"/>`);
+  // 兩條孖辮（兩側）
+  const braid=(x)=>`<circle cx="${x}" cy="44" r="6.5" fill="url(#${u}ha)" stroke="#3a2511" stroke-width="1.2"/><circle cx="${x}" cy="54" r="5.6" fill="url(#${u}ha)" stroke="#3a2511" stroke-width="1.2"/><circle cx="${x}" cy="63" r="4.6" fill="url(#${u}ha)" stroke="#3a2511" stroke-width="1.2"/>`;
+  P.push(braid(32), braid(68));
+  const bow=(x)=>`<g><path d="M${x} 36 l-6 -3 v6 z" fill="#ff5f85" stroke="#d12d5c" stroke-width="1"/><path d="M${x} 36 l6 -3 v6 z" fill="#ff5f85" stroke="#d12d5c" stroke-width="1"/><circle cx="${x}" cy="36" r="2.4" fill="#e03060"/></g>`;
+  P.push(bow(32), bow(68));
+  // 後腦勺
+  P.push(`<circle cx="50" cy="33" r="21" fill="url(#${u}ha)"/>`);
+  P.push(`<path d="M36 30 Q50 22 64 30" stroke="rgba(255,255,255,.18)" stroke-width="2.5" fill="none" stroke-linecap="round"/>`);
+  // 盔甲背
+  if(gear>=3) P.push(`<path d="M37 57 Q50 53 63 57 L66 76 Q50 82 34 76 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="2"/>`);
+  // 圓盾喺背中央（未着披風先見到）
+  if(gear>=2 && gear<5) P.push(`<ellipse cx="50" cy="70" rx="13" ry="15" fill="url(#${u}go)" stroke="#b8892a" stroke-width="2"/><ellipse cx="50" cy="70" rx="9" ry="11" fill="url(#${u}shd)"/><path d="M50 62 l1.8 4.6 l5 .3 l-3.9 3.3 l1.2 4.9 l-4.1-2.7 l-4.1 2.7 l1.2-4.9 l-3.9-3.3 l5-.3 Z" fill="#ffd34d"/>`);
+  // 披風遮背
+  if(gear>=5) P.push(`<path d="M34 54 Q24 84 30 110 L70 110 Q76 84 66 54 Q50 60 34 54 Z" fill="url(#${u}ca)" stroke="#8e1717" stroke-width="2"/>`,
+    `<path d="M50 58 L50 108 M42 57 Q40 84 44 108 M58 57 Q60 84 56 108" stroke="rgba(110,10,10,.3)" stroke-width="1.6" fill="none"/>`);
+  // 頭盔背
+  if(gear>=4) P.push(`<path d="M30 33 Q30 11 50 11 Q70 11 70 33 L70 36 L30 36 Z" fill="url(#${u}me)" stroke="#7d8da0" stroke-width="2"/>`,
+    `<path d="M50 11 Q46 1 50 -1 Q54 1 50 11 Z" fill="url(#${u}ca)" stroke="#8e1717" stroke-width="1.4"/>`,
+    `<rect x="30" y="31" width="40" height="4.2" rx="2" fill="url(#${u}go)" stroke="#b8892a" stroke-width="1"/>`);
   return `<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg">${P.join("")}</svg>`;
 }
 
@@ -412,9 +454,14 @@ function castleSVG(){
     <rect x="98" y="20" width="22" height="106" fill="url(#cst)" stroke="#7d8590" stroke-width="2"/>
     <path d="M-2 20 L11 4 L24 20 Z" fill="#e23b3b" stroke="#a32424" stroke-width="1.5"/>
     <path d="M96 20 L109 4 L122 20 Z" fill="#e23b3b" stroke="#a32424" stroke-width="1.5"/>
-    <!-- 大門 -->
-    <path d="M48 126 L48 80 Q60 68 72 80 L72 126 Z" fill="#6b4423" stroke="#4a2f17" stroke-width="2"/>
-    <path d="M60 80 L60 126 M50 90 Q60 82 70 90 M50 104 L70 104" stroke="#4a2f17" stroke-width="1.5" fill="none"/>
+    <!-- 門洞（深色，開門後見到）-->
+    <path d="M47 126 L47 80 Q60 67 73 80 L73 126 Z" fill="#1c140b"/>
+    <!-- 木門（可開）-->
+    <g id="castleDoor" style="transform-box:fill-box;transform-origin:left center;">
+      <path d="M47 126 L47 80 Q60 67 73 80 L73 126 Z" fill="#6b4423" stroke="#4a2f17" stroke-width="2"/>
+      <path d="M60 80 L60 126 M50 90 Q60 82 70 90 M50 104 L70 104" stroke="#4a2f17" stroke-width="1.5" fill="none"/>
+      <circle cx="68" cy="103" r="1.8" fill="#e8b93c"/>
+    </g>
     <!-- 窗 -->
     <rect x="6" y="44" width="10" height="16" rx="5" fill="#3a5168"/><rect x="104" y="44" width="10" height="16" rx="5" fill="#3a5168"/>
   </svg>`;
@@ -595,30 +642,41 @@ async function flagpoleSequence(){
   sfx.jump();
   girl.animate([{transform:"translate(0,0)"},{transform:"translate(31vmin,-44vmin)"}],{duration:600,easing:"ease-out",fill:"forwards"});
   await wait(620);
-  // 拉旗落桿 + 沿桿滑到最低點
+  // 拉旗：旗仔沿桿向下滑到最低點（同時女仔沿桿滑落）
   const banner=flag.querySelector("#flagBanner");
-  if(banner) banner.animate([{transform:"translateY(44px)"},{transform:"translateY(0)"}],{duration:1000,easing:"ease-out",fill:"forwards"});
+  if(banner) banner.animate([{transform:"translateY(0)"},{transform:"translateY(152px)"}],{duration:1100,easing:"ease-out",fill:"forwards"});
   sfx.flag();
-  girl.animate([{transform:"translate(31vmin,-44vmin)"},{transform:"translate(31vmin,0)"}],{duration:1050,easing:"ease-in",fill:"forwards"});
-  await wait(1100);
+  girl.animate([{transform:"translate(31vmin,-44vmin)"},{transform:"translate(31vmin,0)"}],{duration:1100,easing:"ease-in",fill:"forwards"});
+  await wait(1150);
   // 細跳一下離開旗桿
   sfx.jump();
   girl.animate([{transform:"translate(31vmin,0)"},{transform:"translate(35vmin,-9vmin)",offset:.5},{transform:"translate(37vmin,0)"}],{duration:480,easing:"ease-out",fill:"forwards"});
   await wait(520);
   speak("過關喇，好叻呀！");
   await wait(350);
-  // 繼續向右行入城堡（世界捲動，城堡門埋到嚟）
+  // 繼續向右行向城堡（世界捲動，城堡門埋到嚟）
   worldScroll(true);
-  flag.style.transition="left 1.9s linear"; flag.style.left="-30%";
-  castle.style.transition="left 1.9s linear"; castle.style.left="30%";
+  flag.style.transition="left 1.9s linear"; flag.style.left="-20%";
+  castle.style.transition="left 1.9s linear"; castle.style.left="34%";
   await wait(1950);
   worldScroll(false);
-  // 入門：縮細淡出
-  sfx.jump();
-  girl.animate([{transform:"translate(37vmin,0) scale(1)",opacity:1},{transform:"translate(44vmin,1vmin) scale(.5)",opacity:0}],{duration:560,easing:"ease-in",fill:"forwards"});
-  await wait(600);
+  // 城堡先開門
+  const door=castle.querySelector("#castleDoor");
+  if(door) door.animate([{transform:"scaleX(1)"},{transform:"scaleX(.06)"}],{duration:550,easing:"ease-in-out",fill:"forwards"});
+  sfx.stomp();
+  await wait(700);
+  // 女仔轉背向，行入城堡（縮細淡入黑門）
+  girl.innerHTML = backGirlSVG(state.gear);
+  girl.classList.add("walking");
+  girl.animate([
+    { transform:"translate(37vmin,0) scale(1)", opacity:1, offset:0 },
+    { transform:"translate(48vmin,-1vmin) scale(.62)", opacity:1, offset:.7 },
+    { transform:"translate(52vmin,-1vmin) scale(.42)", opacity:0, offset:1 }
+  ],{duration:1500,easing:"ease-in",fill:"forwards"});
+  await wait(1550);
+  girl.classList.remove("walking");
   sfx.win(); burstFx(castle,"🎉",12);
-  await wait(800);
+  await wait(700);
   showWin();
 }
 

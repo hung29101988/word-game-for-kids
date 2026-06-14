@@ -928,7 +928,7 @@ function enterRest(){
   try { speechSynthesis.cancel(); } catch(e){}
   $("restScreen").classList.add("show");
   $("restTimer").textContent = fmtTime(restUntil - Date.now());
-  speak("玩咗好耐喇，抖一抖，閂埋眼休息吓，等陣再玩啦");
+  speak("玩咗好耐喇，抖一抖，合埋眼休息吓，等陣再玩啦");
 }
 function endRest(){
   $("restScreen").classList.remove("show");

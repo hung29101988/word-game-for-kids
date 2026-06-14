@@ -38,21 +38,66 @@
   /* ===== 對戰畫面 ===== */
   #battleScreen { background:#7ec8e3; }
   #arena {
-    position:relative; flex: 0 0 56%;
+    position:relative; flex: 0 0 56%; overflow:hidden;
     background: linear-gradient(#aee7ff 0%, #d8f4ff 58%, #9ddb7e 58%, #7cc95b 100%);
-    overflow:hidden;
   }
-  .cloud { position:absolute; background:#fff; border-radius:50vmin; opacity:.85; }
+  /* 六個場景背景 */
+  #arena.s0 { background: linear-gradient(#aee7ff 0%, #d8f4ff 58%, #9ddb7e 58%, #7cc95b 100%); }                                   /* 平原 */
+  #arena.s1 { background: linear-gradient(#a6def5 0%, #d4f1ff 36%, #4fbfe6 36%, #84d6f0 54%, #f6e6b2 54%, #e7cb82 100%); }          /* 沙灘 */
+  #arena.s2 { background: linear-gradient(#bfe6bd 0%, #d9f1d0 40%, #4f9d52 40%, #2c7438 100%); }                                    /* 森林 */
+  #arena.s3 { background: linear-gradient(#ff9d52 0%, #ffcb80 32%, #b65733 50%, #5d2421 72%, #2c1110 100%); }                       /* 火山 */
+  #arena.s4 { background: linear-gradient(#3f3b63 0%, #58527f 44%, #2c2947 52%, #14122a 100%); }                                    /* 幽谷 */
+  #arena.s5 { background: linear-gradient(#2a1b3c 0%, #45285c 38%, #1a0e2a 52%, #070411 100%); }                                    /* 深淵 */
+
+  .cloud { position:absolute; background:#fff; border-radius:50vmin; opacity:.85; display:none; }
   .cloud::before,.cloud::after{ content:""; position:absolute; background:#fff; border-radius:50%; }
   .c1{ width:16vmin; height:5vmin; top:8%; left:6%; animation:drift 38s linear infinite; }
   .c1::before{ width:7vmin;height:7vmin; top:-3vmin; left:3vmin; }
   .c2{ width:12vmin; height:4vmin; top:20%; left:55%; animation:drift 50s linear infinite; }
   .c2::before{ width:5vmin;height:5vmin; top:-2.2vmin; left:2.5vmin; }
+  #arena.s0 .cloud, #arena.s1 .cloud { display:block; }
   @keyframes drift { from{transform:translateX(0)} to{transform:translateX(110vw)} }
+
+  /* 場景裝飾層 */
+  .deco { position:absolute; inset:0; pointer-events:none; display:none; }
+  /* 森林：遠處樹影 */
+  #arena.s2 .deco-trees { display:block; background:
+    radial-gradient(circle at 10% 30%, #2f7a3c 0 8.5vmin, transparent 9vmin),
+    radial-gradient(circle at 26% 22%, #36843f 0 7vmin, transparent 7.5vmin),
+    radial-gradient(circle at 90% 28%, #2f7a3c 0 8vmin, transparent 8.5vmin),
+    radial-gradient(circle at 72% 20%, #36843f 0 6.5vmin, transparent 7vmin); opacity:.7; }
+  /* 火山：底部岩漿光 + 灰塵 */
+  #arena.s3 .deco-glow { display:block;
+    background: radial-gradient(ellipse 65% 32% at 50% 102%, rgba(255,120,30,.9), rgba(255,70,20,0) 70%);
+    animation: glowPulse 2.6s ease-in-out infinite; }
+  #arena.s3 .deco-embers { display:block; }
+  .deco-embers i { position:absolute; bottom:5%; width:1.4vmin; height:1.4vmin; border-radius:50%;
+    background:radial-gradient(#ffe9a0, #ff7a1e); opacity:0; }
+  #arena.s3 .deco-embers i { animation: ember 3s linear infinite; }
+  .deco-embers i:nth-child(1){ left:32%; animation-delay:0s; }
+  .deco-embers i:nth-child(2){ left:54%; animation-delay:.9s; }
+  .deco-embers i:nth-child(3){ left:68%; animation-delay:1.7s; }
+  .deco-embers i:nth-child(4){ left:44%; animation-delay:2.4s; }
+  @keyframes ember { 0%{ transform:translateY(0) scale(1); opacity:0 } 15%{ opacity:1 }
+    100%{ transform:translateY(-28vmin) scale(.3); opacity:0 } }
+  /* 幽谷／深淵：迷霧 */
+  #arena.s4 .deco-mist, #arena.s5 .deco-mist { display:block; background:
+    radial-gradient(ellipse 42% 9% at 28% 72%, rgba(255,255,255,.16), transparent 70%),
+    radial-gradient(ellipse 50% 10% at 72% 86%, rgba(255,255,255,.12), transparent 70%);
+    animation: mistDrift 13s ease-in-out infinite alternate; }
+  /* 深淵：詭異紫光 */
+  #arena.s5 .deco-glow { display:block;
+    background: radial-gradient(ellipse 55% 42% at 50% 56%, rgba(150,80,220,.35), transparent 70%);
+    animation: glowPulse 4s ease-in-out infinite; }
+  @keyframes glowPulse { 0%,100%{ opacity:.65 } 50%{ opacity:1 } }
+  @keyframes mistDrift { from{ transform:translateX(-4vmin) } to{ transform:translateX(4vmin) } }
 
   .platform { position:absolute; background:rgba(70,140,50,.35); border-radius:50%; }
   #oppPlatform { width:34vmin; height:8vmin; right:6%; top:46%; }
   #plyPlatform { width:38vmin; height:9vmin; left:5%; bottom:4%; }
+  #arena.s1 .platform { background:rgba(150,110,40,.28); }
+  #arena.s3 .platform { background:rgba(20,8,6,.4); }
+  #arena.s4 .platform, #arena.s5 .platform { background:rgba(8,6,18,.42); }
 
   .fighter { position:absolute; display:flex; flex-direction:column; align-items:center; }
   #oppBox { right:8%; top:6%; }
@@ -207,9 +252,13 @@
 
 <!-- 對戰畫面 -->
 <div id="battleScreen" class="screen">
-  <div id="arena">
+  <div id="arena" class="s0">
     <div class="cloud c1"></div>
     <div class="cloud c2"></div>
+    <div class="deco deco-trees"></div>
+    <div class="deco deco-glow"></div>
+    <div class="deco deco-embers"><i></i><i></i><i></i><i></i></div>
+    <div class="deco deco-mist"></div>
     <div class="platform" id="oppPlatform"></div>
     <div class="platform" id="plyPlatform"></div>
 
@@ -617,6 +666,10 @@ async function startBattle(){
   renderHp();
 
   showScreen("battleScreen");
+  // 場景跟關卡：平原→沙灘→森林→火山→幽谷→深淵
+  const arena = $("arena");
+  arena.classList.remove("s0","s1","s2","s3","s4","s5");
+  arena.classList.add("s" + Math.min(state.level, 5));
   $("bubble").classList.remove("show");
   $("choices").classList.add("locked");
   document.querySelectorAll(".choice").forEach(b=>{ b.textContent=""; b.className="choice"; });

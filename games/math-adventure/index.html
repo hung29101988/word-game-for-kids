@@ -718,12 +718,20 @@ async function runGame(){
   renderHud();
   showScreen("gameScreen");
   setScene(0);
-  $("girl").innerHTML = girlSVG(0);
-  $("girl").style.transform="";
-  $("monster").style.opacity="1"; $("monster").style.left="106%";
+  // 取消上一局殘留嘅 fill:forwards 動畫（唔係嘅話女仔會保持隱形）
+  const girl=$("girl");
+  girl.getAnimations().forEach(a=>a.cancel());
+  girl.classList.remove("walking");
+  girl.style.transform=""; girl.style.opacity=""; girl.style.transformOrigin="";
+  girl.innerHTML = girlSVG(0);
+  const chest=$("chest");
+  chest.getAnimations().forEach(a=>a.cancel());
+  chest.classList.remove("open"); chest.style.display="none"; chest.style.opacity=""; chest.style.transform="";
+  const monster=$("monster");
+  monster.getAnimations().forEach(a=>a.cancel());
+  monster.style.opacity="1"; monster.style.left="106%"; monster.style.transform=""; monster.style.transition="";
   $("flag").style.left="140%"; $("flag").innerHTML="";
   $("castle").style.left="160%"; $("castle").innerHTML="";
-  $("chest").style.display="none";
   await wait(300);
   while(state.idx < 10){
     state.busy=false;

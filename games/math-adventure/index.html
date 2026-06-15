@@ -120,8 +120,8 @@
     border:2vmin solid transparent; border-top-color:#5b4a32; }
   #qText { font-size:10vmin; font-weight:900; color:#3a4a8a; }
 
-  /* 旗桿 */
-  #flag { position:absolute; left:140%; bottom:18%; width:8vmin; height:62%; z-index:14; }
+  /* 旗桿（座底對齊女仔鞋底）*/
+  #flag { position:absolute; left:140%; bottom:calc(18% + 1.25vmin); width:8vmin; height:62%; z-index:14; }
   #flag svg { width:100%; height:100%; overflow:visible; }
 
   /* 城堡 */
@@ -131,8 +131,9 @@
   /* 寶箱 */
   #chest { position:absolute; left:34%; bottom:18%; width:18vmin; height:17vmin; z-index:19; display:none; }
   #chest svg { width:100%; height:100%; overflow:visible; }
-  #chest .lid { transform-box:fill-box; transform-origin:50% 100%; transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
-  #chest.open .lid { transform:translateY(-14%) rotate(-22deg); }
+  /* 蓋升起 + 向女仔（左）傾，似向住女仔打開 */
+  #chest .lid { transform-box:fill-box; transform-origin:50% 100%; transition:transform .4s cubic-bezier(.34,1.56,.64,1); }
+  #chest.open .lid { transform:translateY(-62%) rotate(-24deg); }
   #chest .glow { opacity:0; transition:opacity .35s; }
   #chest.open .glow { opacity:1; }
 
@@ -677,21 +678,35 @@ async function flagpoleSequence(){
   castle.style.transition="left 1.9s linear"; castle.style.left="42%";
   await wait(1950);
   worldScroll(false);
-  // 城堡先開門
+  // 量度城堡門口（開門前嘅完整門）：中心、底、高度
   const door=castle.querySelector("#castleDoor");
-  if(door) door.animate([{transform:"scaleX(1)"},{transform:"scaleX(.06)"}],{duration:550,easing:"ease-in-out",fill:"forwards"});
+  const dr=door.getBoundingClientRect();
+  const doorCx=dr.left+dr.width/2, doorBottom=dr.bottom, doorH=dr.height;
+  // 城堡先開門
+  door.animate([{transform:"scaleX(1)"},{transform:"scaleX(.08)"}],{duration:550,easing:"ease-in-out",fill:"forwards"});
   sfx.stomp();
   await wait(700);
-  // 女仔轉背向，量度城堡門口中心，行入城堡（縮細淡入黑門）
+  // 女仔轉背向，量度自己基準尺寸，計縮放令啱啱細過道門、鞋底貼門底
   girl.innerHTML = backGirlSVG(state.gear);
-  const doorTx=Math.round(centerXof(castle)-gb.cx);
+  const svT=girl.style.transform, svN=girl.style.transition;
+  girl.style.transition="none"; girl.style.transform="none";
+  const gr=girl.getBoundingClientRect();
+  girl.style.transform=svT; girl.style.transition=svN;
+  const girlVisH=gr.height*0.90;            // 可見身高（去陰影空隙）
+  const feetGap=gr.height*0.042;            // 鞋底距元素底
+  const scale=Math.max(.32, Math.min(1, (doorH*0.85)/girlVisH));   // 啱啱細過道門
+  girl.style.transformOrigin="50% 100%";
+  const ty=Math.round(doorBottom-(gr.bottom-feetGap*scale));  // 鞋底對齊門底
+  const doorTx=Math.round(doorCx-(gr.left+gr.width/2));        // 中心對齊門口
+  const midTx=Math.round((offTx+doorTx)/2), midScale=((1+scale)/2).toFixed(3), s=scale.toFixed(3);
   girl.classList.add("walking");
   girl.animate([
     { transform:`translate(${offTx}px,0) scale(1)`, opacity:1, offset:0 },
-    { transform:`translate(${Math.round((offTx+doorTx)/2)}px,0) scale(.78)`, opacity:1, offset:.62 },
-    { transform:`translate(${doorTx}px,${Math.round(.6*gb.vmin)}px) scale(.42)`, opacity:0, offset:1 }
-  ],{duration:1800,easing:"linear",fill:"forwards"});
-  await wait(1850);
+    { transform:`translate(${midTx}px,${Math.round(ty*0.55)}px) scale(${midScale})`, opacity:1, offset:.6 },
+    { transform:`translate(${doorTx}px,${ty}px) scale(${s})`, opacity:1, offset:.86 },
+    { transform:`translate(${doorTx}px,${ty}px) scale(${s})`, opacity:0, offset:1 }
+  ],{duration:1900,easing:"linear",fill:"forwards"});
+  await wait(1950);
   girl.classList.remove("walking");
   sfx.win(); burstFx(castle,"🎉",12);
   await wait(700);

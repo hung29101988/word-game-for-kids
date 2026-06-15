@@ -417,9 +417,12 @@ function monsterSVG(i){
 /* ================= 旗桿 ================= */
 function flagSVG(){
   return `<svg viewBox="0 0 40 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYEnd meet">
-    <rect x="17" y="6" width="6" height="194" rx="3" fill="#bcae8a" stroke="#8f8156" stroke-width="1.5"/>
+    <rect x="17" y="6" width="6" height="190" rx="3" fill="#bcae8a" stroke="#8f8156" stroke-width="1.5"/>
     <circle cx="20" cy="6" r="6" fill="#ffd34d" stroke="#d9a82a" stroke-width="1.5"/>
     <g id="flagBanner"><path d="M17 18 L-12 28 L17 38 Z" fill="#e23b3b" stroke="#a32424" stroke-width="1.5"/><circle cx="2" cy="28" r="3" fill="#ffd34d"/></g>
+    <!-- 旗桿座（畫面最低）-->
+    <rect x="9" y="190" width="22" height="6" rx="2" fill="#bcae8a" stroke="#7a6c44" stroke-width="1.5"/>
+    <path d="M3 200 L8 196 L32 196 L37 200 Z" fill="#a89a6a" stroke="#7a6c44" stroke-width="1.5"/>
   </svg>`;
 }
 
@@ -494,14 +497,14 @@ function speak(t){ if(!("speechSynthesis" in window)) return; speechSynthesis.ca
 
 /* ================= 出題（個位數加減，答案 ≥0） ================= */
 function makeQuestion(i){
-  const addMax = [3,3,5,5,6,6,8,9,9,9][i] || 9;
+  const cap = [4,5,6,7,8,9,10,10,10,10][i] || 10;   // 答案上限，最多 10
   let op,a,b,ans;
   if(i>=4 && Math.random()<0.5){
-    op="－"; a=rand(2, Math.min(9,4+i)); b=rand(0,a); ans=a-b;
+    op="－"; a=rand(2, Math.min(9,cap)); b=rand(1, a-1); ans=a-b;   // b≥1 且 <a → 答案≥1（唔會 0）
   } else {
-    op="＋"; a=rand(1,addMax); b=rand(1,addMax); ans=a+b;
+    op="＋"; a=rand(1, cap-1); b=rand(1, cap-a); ans=a+b;           // a,b≥1 且 a+b≤cap≤10
   }
-  let dist; do{ dist = ans + (Math.random()<0.5?-1:1)*rand(1,2); } while(dist<0 || dist===ans);
+  let dist; do{ dist = ans + (Math.random()<0.5?-1:1)*rand(1,2); } while(dist<1 || dist>10 || dist===ans);
   const options = Math.random()<0.5 ? [ans,dist] : [dist,ans];
   return { text:`${a} ${op} ${b}`, spoken:`${a} ${op==="＋"?"加":"減"} ${b} 等於幾呀`, answer:ans, options };
 }
@@ -627,6 +630,16 @@ function worldScroll(on){
   $("girl").classList[m]("walking"); $("ground").classList[m]("scroll"); $("bgFar").classList[m]("scroll");
   document.querySelectorAll(".cloud").forEach(c=>c.classList[m]("scroll"));
 }
+// 量度女仔「無 transform 時」嘅中心，用嚟計要 translateX 幾多先對準目標
+function girlBaseCenterX(){
+  const girl=$("girl"), sv=girl.style.transform, st=girl.style.transition;
+  girl.style.transition="none"; girl.style.transform="translateX(0px)";
+  const r=girl.getBoundingClientRect();
+  girl.style.transform=sv; girl.style.transition=st;
+  return { cx:r.left+r.width/2, vmin:Math.min(window.innerWidth,window.innerHeight)/100 };
+}
+function centerXof(el){ const r=el.getBoundingClientRect(); return r.left+r.width/2; }
+
 async function flagpoleSequence(){
   const girl=$("girl"), flag=$("flag"), castle=$("castle");
   flag.innerHTML=flagSVG(); flag.style.transition="none"; flag.style.left="120%";
@@ -635,29 +648,33 @@ async function flagpoleSequence(){
   // 行到旗桿（旗桿同城堡一齊捲入）
   worldScroll(true);
   flag.style.transition="left 2s linear"; flag.style.left="52%";
-  castle.style.transition="left 2s linear"; castle.style.left="86%";
+  castle.style.transition="left 2s linear"; castle.style.left="88%";
   await wait(2050);
   worldScroll(false);
+  // 量度旗桿位置，計女仔要行去邊
+  const gb=girlBaseCenterX();
+  const poleTx=Math.round(centerXof(flag)-gb.cx);
   // 跳起捉住旗桿頂
   sfx.jump();
-  girl.animate([{transform:"translate(0,0)"},{transform:"translate(31vmin,-44vmin)"}],{duration:600,easing:"ease-out",fill:"forwards"});
+  girl.animate([{transform:"translate(0,0)"},{transform:`translate(${poleTx}px,-44vmin)`}],{duration:600,easing:"ease-out",fill:"forwards"});
   await wait(620);
   // 拉旗：旗仔沿桿向下滑到最低點（同時女仔沿桿滑落）
   const banner=flag.querySelector("#flagBanner");
   if(banner) banner.animate([{transform:"translateY(0)"},{transform:"translateY(152px)"}],{duration:1100,easing:"ease-out",fill:"forwards"});
   sfx.flag();
-  girl.animate([{transform:"translate(31vmin,-44vmin)"},{transform:"translate(31vmin,0)"}],{duration:1100,easing:"ease-in",fill:"forwards"});
+  girl.animate([{transform:`translate(${poleTx}px,-44vmin)`},{transform:`translate(${poleTx}px,0)`}],{duration:1100,easing:"ease-in",fill:"forwards"});
   await wait(1150);
   // 細跳一下離開旗桿
   sfx.jump();
-  girl.animate([{transform:"translate(31vmin,0)"},{transform:"translate(35vmin,-9vmin)",offset:.5},{transform:"translate(37vmin,0)"}],{duration:480,easing:"ease-out",fill:"forwards"});
+  const offTx=poleTx+Math.round(4*gb.vmin);
+  girl.animate([{transform:`translate(${poleTx}px,0)`},{transform:`translate(${poleTx+Math.round(2*gb.vmin)}px,-9vmin)`,offset:.5},{transform:`translate(${offTx}px,0)`}],{duration:480,easing:"ease-out",fill:"forwards"});
   await wait(520);
   speak("過關喇，好叻呀！");
   await wait(350);
-  // 繼續向右行向城堡（世界捲動，城堡門埋到嚟）
+  // 鏡頭推進：世界向左捲，城堡停喺女仔右邊
   worldScroll(true);
-  flag.style.transition="left 1.9s linear"; flag.style.left="-20%";
-  castle.style.transition="left 1.9s linear"; castle.style.left="34%";
+  flag.style.transition="left 1.9s linear"; flag.style.left="-25%";
+  castle.style.transition="left 1.9s linear"; castle.style.left="42%";
   await wait(1950);
   worldScroll(false);
   // 城堡先開門
@@ -665,15 +682,16 @@ async function flagpoleSequence(){
   if(door) door.animate([{transform:"scaleX(1)"},{transform:"scaleX(.06)"}],{duration:550,easing:"ease-in-out",fill:"forwards"});
   sfx.stomp();
   await wait(700);
-  // 女仔轉背向，行入城堡（縮細淡入黑門）
+  // 女仔轉背向，量度城堡門口中心，行入城堡（縮細淡入黑門）
   girl.innerHTML = backGirlSVG(state.gear);
+  const doorTx=Math.round(centerXof(castle)-gb.cx);
   girl.classList.add("walking");
   girl.animate([
-    { transform:"translate(37vmin,0) scale(1)", opacity:1, offset:0 },
-    { transform:"translate(48vmin,-1vmin) scale(.62)", opacity:1, offset:.7 },
-    { transform:"translate(52vmin,-1vmin) scale(.42)", opacity:0, offset:1 }
-  ],{duration:1500,easing:"ease-in",fill:"forwards"});
-  await wait(1550);
+    { transform:`translate(${offTx}px,0) scale(1)`, opacity:1, offset:0 },
+    { transform:`translate(${Math.round((offTx+doorTx)/2)}px,0) scale(.78)`, opacity:1, offset:.62 },
+    { transform:`translate(${doorTx}px,${Math.round(.6*gb.vmin)}px) scale(.42)`, opacity:0, offset:1 }
+  ],{duration:1800,easing:"linear",fill:"forwards"});
+  await wait(1850);
   girl.classList.remove("walking");
   sfx.win(); burstFx(castle,"🎉",12);
   await wait(700);

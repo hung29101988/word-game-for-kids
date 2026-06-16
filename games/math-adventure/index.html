@@ -120,8 +120,8 @@
     border:2vmin solid transparent; border-top-color:#5b4a32; }
   #qText { font-size:10vmin; font-weight:900; color:#3a4a8a; }
 
-  /* 旗桿（座底對齊女仔鞋底）*/
-  #flag { position:absolute; left:140%; bottom:calc(18% + 1.25vmin); width:8vmin; height:62%; z-index:14; }
+  /* 旗桿（座底會喺程式即時對齊女仔鞋底）*/
+  #flag { position:absolute; left:140%; bottom:18%; width:8vmin; height:62%; z-index:14; }
   #flag svg { width:100%; height:100%; overflow:visible; }
 
   /* 城堡 */
@@ -131,9 +131,9 @@
   /* 寶箱 */
   #chest { position:absolute; left:34%; bottom:18%; width:18vmin; height:17vmin; z-index:19; display:none; }
   #chest svg { width:100%; height:100%; overflow:visible; }
-  /* 蓋升起 + 向女仔（左）傾，似向住女仔打開 */
-  #chest .lid { transform-box:fill-box; transform-origin:50% 100%; transition:transform .4s cubic-bezier(.34,1.56,.64,1); }
-  #chest.open .lid { transform:translateY(-62%) rotate(-24deg); }
+  /* 蓋以左邊做鉸位，向左（女仔方向）企起揭開 */
+  #chest .lid { transform-box:fill-box; transform-origin:24% 97%; transition:transform .45s cubic-bezier(.34,1.56,.64,1); }
+  #chest.open .lid { transform:rotate(-122deg); }
   #chest .glow { opacity:0; transition:opacity .35s; }
   #chest.open .glow { opacity:1; }
 
@@ -428,19 +428,34 @@ function flagSVG(){
 }
 
 /* ================= 寶箱 ================= */
-function chestSVG(){
+function chestSVG(open){
+  const lidShape = `<path d="M19 47 Q19 26 50 26 Q81 26 81 47 Z" fill="#b87842" stroke="#7a4a24" stroke-width="2.5"/>`+
+    `<rect x="44" y="30" width="12" height="17" fill="#e8b93c" stroke="#b8892a" stroke-width="1"/>`+
+    `<path d="M24 38 Q36 30 50 30" stroke="rgba(255,255,255,.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  if(open){
+    return `<svg viewBox="0 0 100 92" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="86" rx="33" ry="5" fill="rgba(0,0,0,.18)"/>
+      <!-- 揭起咗、向左企嘅蓋（鉸位喺箱左上角）-->
+      <g transform="rotate(-118 21 47)">${lidShape}</g>
+      <!-- 箱身 -->
+      <rect x="20" y="46" width="60" height="34" rx="5" fill="#a86a3a" stroke="#7a4a24" stroke-width="2.5"/>
+      <!-- 內部深色 + 金光 + 金幣 -->
+      <path d="M21 48 Q50 41 79 48 L79 53 Q50 46 21 53 Z" fill="#2a1c0e"/>
+      <ellipse class="glow" cx="50" cy="41" rx="28" ry="15" fill="#fff3a8"/>
+      <ellipse cx="50" cy="47" rx="24" ry="7" fill="#ffd34d"/>
+      <circle cx="41" cy="45" r="3.2" fill="#ffe98a"/><circle cx="55" cy="46" r="2.6" fill="#ffe98a"/><circle cx="48" cy="43" r="2.2" fill="#fff3c0"/>
+      <rect x="20" y="54" width="60" height="6" fill="#e8b93c"/>
+      <rect x="44" y="60" width="12" height="20" fill="#e8b93c" stroke="#b8892a" stroke-width="1"/>
+      <rect x="45" y="64" width="10" height="9" rx="1.5" fill="#8a5a2b"/><circle cx="50" cy="68.5" r="1.6" fill="#3a2511"/>
+    </svg>`;
+  }
   return `<svg viewBox="0 0 100 92" xmlns="http://www.w3.org/2000/svg">
     <ellipse cx="50" cy="86" rx="33" ry="5" fill="rgba(0,0,0,.18)"/>
-    <ellipse class="glow" cx="50" cy="44" rx="30" ry="18" fill="#fff3a8"/>
     <rect x="20" y="46" width="60" height="34" rx="5" fill="#a86a3a" stroke="#7a4a24" stroke-width="2.5"/>
     <rect x="20" y="54" width="60" height="6" fill="#e8b93c"/>
     <rect x="44" y="46" width="12" height="34" fill="#e8b93c" stroke="#b8892a" stroke-width="1"/>
     <rect x="45" y="60" width="10" height="9" rx="1.5" fill="#8a5a2b"/><circle cx="50" cy="64.5" r="1.6" fill="#3a2511"/>
-    <g class="lid">
-      <path d="M19 47 Q19 26 50 26 Q81 26 81 47 Z" fill="#b87842" stroke="#7a4a24" stroke-width="2.5"/>
-      <rect x="44" y="30" width="12" height="17" fill="#e8b93c" stroke="#b8892a" stroke-width="1"/>
-      <path d="M24 38 Q36 30 50 30" stroke="rgba(255,255,255,.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    </g>
+    <g>${lidShape}</g>
   </svg>`;
 }
 
@@ -607,13 +622,13 @@ const GEAR_NAME = ["執到把劍","執到個盾","執到件盔甲","執到個頭
 async function treasureChest(){
   state.gear++;
   const chest=$("chest"), girl=$("girl");
-  chest.innerHTML = chestSVG(); chest.classList.remove("open"); chest.style.display="block";
+  chest.innerHTML = chestSVG(false); chest.style.display="block";
   chest.animate([{transform:"translateY(20vmin) scale(.5)",opacity:0},{transform:"translateY(0) scale(1)",opacity:1}],{duration:420,easing:"cubic-bezier(.34,1.56,.64,1)",fill:"forwards"});
   sfx.jump();
   await wait(480);
   chest.animate([{transform:"rotate(0)"},{transform:"rotate(-5deg)"},{transform:"rotate(5deg)"},{transform:"rotate(-3deg)"},{transform:"rotate(0)"}],{duration:380});
   await wait(420);
-  chest.classList.add("open"); sfx.right(); burstFx(chest,"✨",10);
+  chest.innerHTML = chestSVG(true); sfx.right(); burstFx(chest,"✨",10);
   await wait(420);
   girl.innerHTML = girlSVG(state.gear);
   girl.animate([{transform:"scale(1)"},{transform:"scale(1.14)"},{transform:"scale(1)"}],{duration:480});
@@ -631,13 +646,13 @@ function worldScroll(on){
   $("girl").classList[m]("walking"); $("ground").classList[m]("scroll"); $("bgFar").classList[m]("scroll");
   document.querySelectorAll(".cloud").forEach(c=>c.classList[m]("scroll"));
 }
-// 量度女仔「無 transform 時」嘅中心，用嚟計要 translateX 幾多先對準目標
-function girlBaseCenterX(){
+// 量度女仔「無任何動畫 transform 時」嘅基準位置（要喺 WAAPI 動畫開始之前叫）
+function girlBase(){
   const girl=$("girl"), sv=girl.style.transform, st=girl.style.transition;
   girl.style.transition="none"; girl.style.transform="translateX(0px)";
   const r=girl.getBoundingClientRect();
   girl.style.transform=sv; girl.style.transition=st;
-  return { cx:r.left+r.width/2, vmin:Math.min(window.innerWidth,window.innerHeight)/100 };
+  return { cx:r.left+r.width/2, bottom:r.bottom, height:r.height, vmin:Math.min(window.innerWidth,window.innerHeight)/100 };
 }
 function centerXof(el){ const r=el.getBoundingClientRect(); return r.left+r.width/2; }
 
@@ -652,8 +667,11 @@ async function flagpoleSequence(){
   castle.style.transition="left 2s linear"; castle.style.left="88%";
   await wait(2050);
   worldScroll(false);
-  // 量度旗桿位置，計女仔要行去邊
-  const gb=girlBaseCenterX();
+  // 量度女仔基準位置（此刻仲未有 WAAPI 動畫）+ 旗桿位置
+  const gb=girlBase();
+  const footGap=gb.height*0.042;
+  // 旗桿座底升到對齊女仔鞋底
+  flag.style.transform=`translateY(${-Math.round(footGap)}px)`;
   const poleTx=Math.round(centerXof(flag)-gb.cx);
   // 跳起捉住旗桿頂
   sfx.jump();
@@ -686,18 +704,14 @@ async function flagpoleSequence(){
   door.animate([{transform:"scaleX(1)"},{transform:"scaleX(.08)"}],{duration:550,easing:"ease-in-out",fill:"forwards"});
   sfx.stomp();
   await wait(700);
-  // 女仔轉背向，量度自己基準尺寸，計縮放令啱啱細過道門、鞋底貼門底
+  // 女仔轉背向，用基準位置(gb)計縮放令啱啱細過道門、鞋底貼門底、對準門口中心
   girl.innerHTML = backGirlSVG(state.gear);
-  const svT=girl.style.transform, svN=girl.style.transition;
-  girl.style.transition="none"; girl.style.transform="none";
-  const gr=girl.getBoundingClientRect();
-  girl.style.transform=svT; girl.style.transition=svN;
-  const girlVisH=gr.height*0.90;            // 可見身高（去陰影空隙）
-  const feetGap=gr.height*0.042;            // 鞋底距元素底
+  const girlVisH=gb.height*0.90;            // 可見身高（去陰影空隙）
+  const feetGap=gb.height*0.042;            // 鞋底距元素底
   const scale=Math.max(.32, Math.min(1, (doorH*0.85)/girlVisH));   // 啱啱細過道門
   girl.style.transformOrigin="50% 100%";
-  const ty=Math.round(doorBottom-(gr.bottom-feetGap*scale));  // 鞋底對齊門底
-  const doorTx=Math.round(doorCx-(gr.left+gr.width/2));        // 中心對齊門口
+  const ty=Math.round(doorBottom-(gb.bottom-feetGap*scale));  // 鞋底對齊門底
+  const doorTx=Math.round(doorCx-gb.cx);                       // 中心對齊門口
   const midTx=Math.round((offTx+doorTx)/2), midScale=((1+scale)/2).toFixed(3), s=scale.toFixed(3);
   girl.classList.add("walking");
   girl.animate([

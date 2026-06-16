@@ -271,6 +271,20 @@
   #restTimer { font-size:15vmin; font-weight:900; z-index:1; font-variant-numeric:tabular-nums;
     background:rgba(255,255,255,.12); border:.5vmin solid rgba(255,255,255,.25);
     border-radius:5vmin; padding:.5vmin 6vmin; letter-spacing:.5vmin; }
+
+  /* ===== 揀錯解釋卡 ===== */
+  #explainCard { position:fixed; inset:0; z-index:80; display:none;
+    align-items:center; justify-content:center; background:rgba(40,30,20,.4); padding:5vmin; }
+  #explainCard.show { display:flex; }
+  .explainInner { background:#fffef0; border:.9vmin solid #5b4a32; border-radius:7vmin;
+    padding:4vmin 6vmin 5vmin; text-align:center; box-shadow:0 1.6vmin 0 rgba(0,0,0,.22);
+    max-width:88vmin; animation:explainPop .4s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes explainPop { from{ transform:scale(.6); opacity:0 } to{ transform:scale(1); opacity:1 } }
+  .explainHdr { font-size:5.2vmin; font-weight:900; color:#e0588a; }
+  #explainIcon { font-size:24vmin; line-height:1; margin:.5vmin 0; }
+  #explainIcon .icn { width:1.3em; height:1em; vertical-align:middle; }
+  #explainWord { font-size:13vmin; font-weight:900; color:#4a3a26; line-height:1.1; }
+  #explainDesc { font-size:5vmin; font-weight:700; color:#5b4a32; margin-top:1.4vmin; line-height:1.35; }
 </style>
 </head>
 <body>
@@ -336,6 +350,16 @@
   <div id="newGear"></div>
 </div>
 
+<!-- 揀錯解釋卡 -->
+<div id="explainCard">
+  <div class="explainInner">
+    <div class="explainHdr">你揀咗</div>
+    <div id="explainIcon"></div>
+    <div id="explainWord"></div>
+    <div id="explainDesc"></div>
+  </div>
+</div>
+
 <!-- 結算畫面 -->
 <div id="resultScreen" class="screen">
   <div id="resultEmoji">🏆</div>
@@ -391,6 +415,38 @@ const LEVELS = [
   { hp:5, pool:[["巴士",I.bus],["小巴",I.minibus],["的士",I.taxi],["毛巾",I.towel],["水果","🍎🍌🍊"],["水草",I.seaweed],["雪糕","🍦"],["飛機","✈️"]] },
 ];
 const MAX_PLAYER_HP = 4;
+
+// 字 → 圖（由字庫自動建）
+const WORD_ICON = {};
+LEVELS.forEach(l=>l.pool.forEach(([w,ic])=>{ WORD_ICON[w]=ic; }));
+// 字 → 簡短解釋（揀錯時講解俾小朋友聽）
+const WORD_DESC = {
+  "人":"就係我哋每一個人","大":"即係好大件","小":"即係好細件","口":"用嚟食嘢同講嘢",
+  "手":"用嚟攞嘢同拍手","山":"係好高嘅大石頭","水":"用嚟飲同沖涼","天":"係頭頂藍色嘅天空",
+  "眼":"用嚟睇嘢","鼻":"用嚟聞味","牙":"用嚟咬嘢食","腳":"用嚟行路",
+  "女":"即係女仔，好似妹妹","男":"即係男仔，好似哥哥","日":"係天上面個太陽","月":"係夜晚個月亮",
+  "羊":"係咩咩叫嘅動物","兔":"係有長耳仔嘅兔仔","魚":"係喺水裏面游嘅","豬":"係肥肥哋嘅動物",
+  "牛":"係哞哞叫嘅大動物","狗":"係汪汪叫嘅","貓":"係喵喵叫嘅","馬":"係走得好快嘅動物",
+  "花":"又靚又香","草":"係綠色，生喺地上","樹":"好高，有好多葉","海":"好大，好多水",
+  "車":"用嚟搭去唔同地方","星":"係夜晚天上閃閃嘅","蛋":"係雞生嘅，可以食","屋":"係我哋住嘅地方",
+  "爸爸":"係屋企嘅男人","媽媽":"係屋企嘅女人","哥哥":"係大過你嘅男仔","妹妹":"係細過你嘅女仔",
+  "蘋果":"係紅色又甜嘅生果","香蕉":"係黃色彎彎嘅生果","西瓜":"係紅色多水嘅大生果","氣球":"吹脹會飛上天",
+  "巴士":"係好多人一齊搭嘅大車","小巴":"係綠色嘅細車","的士":"係紅色，揚手就截到嘅車","毛巾":"用嚟抹手抹身",
+  "水果":"例如蘋果同香蕉","水草":"係生喺水裏面嘅草","雪糕":"凍凍甜甜，好好食","飛機":"喺天上面飛",
+};
+
+// 揀錯時：彈卡顯示嗰個字嘅圖同解釋，語音講解
+async function explainWord(word){
+  $("explainIcon").innerHTML = WORD_ICON[word] || "";
+  $("explainWord").textContent = word;
+  const desc = WORD_DESC[word] || "";
+  $("explainDesc").textContent = desc;
+  $("explainCard").classList.add("show");
+  speak("你揀咗" + word + "。" + word + desc);
+  await wait(2900);
+  $("explainCard").classList.remove("show");
+  await wait(250);
+}
 
 /* ================= 主角：孖辮小女孩（升級加裝備） ================= */
 /* gear: 0=無 1=劍 2=+盾 3=+盔甲 4=+頭盔 5=+披風 */
@@ -839,9 +895,10 @@ async function answer(btn){
     rightBtn.classList.add("right");
     buttons.forEach(b=>{ if(b!==btn && b!==rightBtn) b.classList.add("dim"); });
     sfx.wrong();
-    await wait(500);
-    speak(state.word);
-    await wait(800);
+    await wait(450);
+    await explainWord(btn.textContent);        // 講解佢揀錯嗰個字係咩
+    speak("正確答案係" + state.word);            // 再講返正確答案
+    await wait(1100);
 
     // 對手攻擊自己
     $("bubble").classList.remove("show");

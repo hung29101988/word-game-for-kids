@@ -669,9 +669,8 @@ async function flagpoleSequence(){
   worldScroll(false);
   // 量度女仔基準位置（此刻仲未有 WAAPI 動畫）+ 旗桿位置
   const gb=girlBase();
-  const footGap=gb.height*0.042;
-  // 旗桿座底升到對齊女仔鞋底
-  flag.style.transform=`translateY(${-Math.round(footGap)}px)`;
+  // 旗桿座底（bottom:18%）已經喺怪物同女仔企嘅地面線，唔好升高
+  flag.style.transform="";
   const poleTx=Math.round(centerXof(flag)-gb.cx);
   // 跳起捉住旗桿頂
   sfx.jump();

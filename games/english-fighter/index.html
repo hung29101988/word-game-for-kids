@@ -51,25 +51,65 @@
   #oppHpFill { background:linear-gradient(#ff6b6b,#d62b2b); }
   #vs { align-self:center; font-size:6vmin; font-weight:900; color:#ffd34d; text-shadow:0 .6vmin 0 #8e2424; padding-top:2vmin; }
 
-  #arena { flex:1; position:relative; overflow:hidden;
-    background:linear-gradient(#3a2f55 0%,#5a4a7a 55%,#7a6a9a 70%,#9a8aba 70%,#6a5a8a 100%); }
-  .floor { position:absolute; left:0; right:0; bottom:0; height:30%;
-    background:repeating-linear-gradient(90deg,#6a5a8a 0 8vmin,#5f5080 8vmin 16vmin);
+  #arena { flex:1; position:relative; overflow:hidden; background:#5a4a7a; }
+  #stageDeco { position:absolute; inset:0; pointer-events:none; }
+  .floor { position:absolute; left:0; right:0; bottom:0; height:28%;
+    background:repeating-linear-gradient(90deg,#6a5a8a 0 9vmin,#5f5080 9vmin 18vmin);
     border-top:.8vmin solid #cdaef0; }
   .spotlight { position:absolute; top:-10%; left:50%; transform:translateX(-50%);
-    width:80%; height:120%; background:radial-gradient(ellipse at top,rgba(255,255,255,.18),transparent 60%); pointer-events:none; }
+    width:80%; height:120%; background:radial-gradient(ellipse at top,rgba(255,255,255,.15),transparent 60%); pointer-events:none; z-index:1; }
 
-  .fighter { position:absolute; bottom:24%; }
-  #plyBox { left:4%; }
-  #oppBox { right:3%; }
+  /* 場景 0：道館 */
+  #arena.stage0 { background:linear-gradient(#d8b890 0%,#e4c8a0 50%,#c8a070 50%,#b5854f 100%); }
+  #arena.stage0 #stageDeco { background:
+      radial-gradient(circle at 13% 17%,#e23b3b 0 4.6vmin,#a32424 4.6vmin 5vmin,transparent 5.3vmin),
+      radial-gradient(circle at 87% 17%,#e23b3b 0 4.6vmin,#a32424 4.6vmin 5vmin,transparent 5.3vmin),
+      linear-gradient(#7a5230,#7a5230) ,
+      repeating-linear-gradient(90deg,transparent 0 13%,rgba(90,60,30,.22) 13% 13.9%);
+    background-repeat:no-repeat,no-repeat,no-repeat,repeat;
+    background-size:auto,auto,100% 1.6vmin,auto; background-position:0 0,0 0,0 6%,0 0; }
+  #arena.stage0 .floor { background:repeating-linear-gradient(90deg,#bb8a52 0 10vmin,#a87a44 10vmin 20vmin); border-top-color:#8a6438; }
+
+  /* 場景 1：竹林 */
+  #arena.stage1 { background:linear-gradient(#d2eccf 0%,#9fd98a 52%,#6db35a 52%,#4f9344 100%); }
+  #arena.stage1 #stageDeco { background:
+      repeating-linear-gradient(90deg,transparent 0 8%,rgba(95,170,80,.6) 8% 10.5%,rgba(55,125,55,.6) 10.5% 11.6%,transparent 11.6% 17%),
+      repeating-linear-gradient(0deg,transparent 0 22%,rgba(40,100,40,.25) 22% 23%,transparent 23% 44%); }
+  #arena.stage1 .floor { background:repeating-linear-gradient(90deg,#5da35a 0 10vmin,#4f9344 10vmin 20vmin); border-top-color:#3c7a2a; }
+
+  /* 場景 2：黃昏碼頭 */
+  #arena.stage2 { background:linear-gradient(#ff9d57 0%,#ffd49a 38%,#ffb37a 54%,#6a8aaa 54%,#46688e 100%); }
+  #arena.stage2 #stageDeco { background:
+      radial-gradient(circle at 50% 40%,#fff2c8 0 6.5vmin,#ffd86b 6.5vmin 8.5vmin,transparent 8.8vmin),
+      repeating-linear-gradient(0deg,transparent 0 88%,rgba(255,255,255,.14) 88% 89.5%,transparent 89.5% 100%);
+    background-repeat:no-repeat,repeat; background-position:0 0,0 100%; background-size:auto,100% 26%; }
+  #arena.stage2 .floor { background:linear-gradient(#5a7a9a,#3a5a7a); border-top-color:#9ab4cc; }
+
+  /* 場景 3：夜晚街道 */
+  #arena.stage3 { background:linear-gradient(#141a36 0%,#27315c 55%,#18203e 100%); }
+  #arena.stage3 #stageDeco { background:
+      radial-gradient(circle at 84% 15%,#fff7d0 0 3.4vmin,transparent 3.7vmin),
+      repeating-linear-gradient(90deg,#1b2342 0 8vmin,#243056 8vmin 9vmin,#1b2342 9vmin 16vmin),
+      repeating-linear-gradient(90deg,transparent 0 2vmin,#ffd86b 2vmin 3vmin,transparent 3vmin 8vmin);
+    background-repeat:no-repeat,no-repeat,no-repeat;
+    background-position:0 0,0 40%,1vmin 50%; background-size:auto,100% 36%,16vmin 3vmin; }
+  #arena.stage3 .floor { background:repeating-linear-gradient(90deg,#2c3460 0 10vmin,#243056 10vmin 20vmin); border-top-color:#4a5a8a; }
+
+  .fighter { position:absolute; bottom:22%; }
+  #plyBox { left:7%; }
+  #oppBox { right:7%; }
   .fighter svg { width:100%; height:100%; overflow:visible; }
-  #plySprite { width:42vmin; height:46vmin; }
-  #oppSprite { width:38vmin; height:38vmin; }
+  #plySprite { width:32vmin; height:36vmin; }
+  #oppSprite { width:28vmin; height:28vmin; }
   .idle { animation:bobI 1.8s ease-in-out infinite; }
   @keyframes bobI { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1.4vmin)} }
-  /* 攻擊：女仔向前撲（踢）*/
-  .lungeR { animation:lungeR .5s ease; }
-  @keyframes lungeR { 30%{ transform:translate(10vmin,-2vmin) scale(1.05) } 100%{ transform:none } }
+  /* 攻擊動作 */
+  .lungeR { animation:lungeR .5s ease; }            /* 氣功波：微撲 */
+  @keyframes lungeR { 30%{ transform:translate(7vmin,-2vmin) scale(1.05) } 100%{ transform:none } }
+  .palmR { animation:palmR .5s ease; }              /* 出掌：向前推 */
+  @keyframes palmR { 25%{ transform:translate(13vmin,0) scale(1.07) } 55%{ transform:translate(11vmin,0) scale(1.04) } 100%{ transform:none } }
+  .kickR { animation:kickR .55s ease; }             /* 踢腳：跳起旋踢 */
+  @keyframes kickR { 22%{ transform:translate(5vmin,-7vmin) rotate(-12deg) } 50%{ transform:translate(15vmin,-3vmin) rotate(10deg) scale(1.07) } 100%{ transform:none } }
   .lungeL { animation:lungeL .5s ease; }
   @keyframes lungeL { 30%{ transform:translate(-9vmin,0) scale(1.05) } 100%{ transform:none } }
   .hurt { animation:hurt .5s ease; }
@@ -149,12 +189,13 @@
 <div id="gameScreen" class="screen">
   <div id="hud">
     <div class="portrait" id="plyPortrait"></div>
-    <div class="hpcol"><div class="hpname">你</div><div class="hpbar"><div class="hpfill" id="plyHpFill"></div></div></div>
+    <div class="hpcol"><div class="hpname">YOU</div><div class="hpbar"><div class="hpfill" id="plyHpFill"></div></div></div>
     <div id="vs">VS</div>
-    <div class="hpcol right"><div class="hpname" id="oppName">怪獸</div><div class="hpbar"><div class="hpfill" id="oppHpFill"></div></div></div>
+    <div class="hpcol right"><div class="hpname" id="oppName">MONSTER</div><div class="hpbar"><div class="hpfill" id="oppHpFill"></div></div></div>
     <div class="portrait" id="oppPortrait"></div>
   </div>
   <div id="arena">
+    <div id="stageDeco"></div>
     <div class="spotlight"></div>
     <div class="floor"></div>
     <div class="fighter" id="oppBox"><div id="oppSprite"></div></div>
@@ -210,6 +251,7 @@ function colorIcon(c){
   return `<svg class="icn" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="52" r="42" fill="${c}" stroke="rgba(0,0,0,.22)" stroke-width="3"/><ellipse cx="38" cy="34" rx="15" ry="9" fill="rgba(255,255,255,.55)"/></svg>`;
 }
 const COL = { red:"#e23b3b", blue:"#3f7fd0", green:"#3fb44a", yellow:"#f5c518", pink:"#ff8fb5" };
+const ENERGY_ORB = `<svg viewBox="0 0 100 100" style="width:13vmin;height:13vmin;overflow:visible"><defs><radialGradient id="eorb" cx="38%" cy="35%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#9fe4ff"/><stop offset="1" stop-color="#2c8fd6"/></radialGradient></defs><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(159,228,255,.45)" stroke-width="5"/><circle cx="50" cy="50" r="37" fill="url(#eorb)"/><ellipse cx="40" cy="36" rx="11" ry="7" fill="rgba(255,255,255,.7)"/></svg>`;
 
 /* ================= 字庫（英文）================= */
 const LEVELS = [
@@ -233,10 +275,17 @@ function girlSVG(){
       <linearGradient id="${u}go" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="${goldD}"/></linearGradient>
     </defs>
     <ellipse cx="52" cy="123" rx="26" ry="5" fill="rgba(0,0,0,.18)"/>
-    <!-- 後腳（蹬後）-->
-    <g><rect x="30" y="86" width="9" height="26" rx="4" fill="${skinD}" transform="rotate(-14 34 90)"/><ellipse cx="26" cy="112" rx="9" ry="4.5" fill="#3a2f55"/></g>
-    <!-- 前腳（弓步）-->
-    <g><rect x="56" y="86" width="9" height="28" rx="4" fill="${skin}"/><ellipse cx="60" cy="115" rx="9.5" ry="4.8" fill="#222"/><ellipse cx="60" cy="114" rx="3" ry="1.4" fill="rgba(255,255,255,.5)"/></g>
+    <!-- 後腳（後撐，腳同鞋一齊斜）-->
+    <g transform="rotate(-8 43 92)">
+      <rect x="38" y="84" width="9.5" height="29" rx="4.7" fill="${skinD}"/>
+      <path d="M33 110 q-4 1.4 -4 4.4 q0 3.4 4.4 3.4 l11 0 q3.4 0 3.4 -3.4 q0 -3 -4.8 -4.4 Z" fill="#2a2a2a"/>
+    </g>
+    <!-- 前腳（弓步在前）-->
+    <g transform="rotate(6 60 92)">
+      <rect x="55.5" y="84" width="9.5" height="30" rx="4.7" fill="${skin}"/>
+      <path d="M51 112 q-4 1.4 -4 4.4 q0 3.4 4.4 3.4 l13 0 q3.4 0 3.4 -3.4 q0 -3 -4.8 -4.4 Z" fill="#2a2a2a"/>
+      <ellipse cx="61" cy="115" rx="3.4" ry="1.3" fill="rgba(255,255,255,.4)"/>
+    </g>
     <!-- 旗袍裙 -->
     <path d="M36 60 Q52 55 68 60 L74 92 Q52 99 30 92 Z" fill="url(#${u}qi)" stroke="${qiD}" stroke-width="2.5"/>
     <path d="M52 60 L52 95" stroke="${gold}" stroke-width="1.6"/>
@@ -357,7 +406,7 @@ function renderHp(){
   $("plyHpFill").style.width = Math.max(0,state.plyHp/MAX_PLY_HP*100)+"%";
   const op = Math.max(0,state.oppHp/state.oppMaxHp*100);
   $("oppHpFill").style.width = op+"%";
-  $("oppName").textContent = "怪獸 " + (state.level+1);
+  $("oppName").textContent = "MONSTER " + (state.level+1);
 }
 function showScreen(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("show")); $(id).classList.add("show"); }
 
@@ -382,6 +431,7 @@ async function startBattle(){
   state.oppMaxHp=lv.hp; state.oppHp=lv.hp; state.plyHp=MAX_PLY_HP;
   state.queue=shuffle(lv.pool);
   showScreen("gameScreen");
+  const arena=$("arena"); arena.classList.remove("stage0","stage1","stage2","stage3"); arena.classList.add("stage"+state.level);
   $("bubble").classList.remove("show");
   $("choices").classList.add("locked");
   document.querySelectorAll(".choice").forEach(b=>{ b.textContent=""; b.className="choice"; });
@@ -432,11 +482,15 @@ async function answer(btn){
     $("bubble").classList.remove("show");
     const ply=$("plySprite"), opp=$("oppSprite");
     sfx.kiai();
-    ply.classList.remove("lungeR"); void ply.offsetWidth; ply.classList.add("lungeR");
-    await flyFx("💥", ply, opp);
+    // 輪流出三招：氣功波 → 出掌 → 踢腳
+    const atk=["energy","palm","kick"][(state.oppMaxHp-state.oppHp)%3];
+    ply.classList.remove("lungeR","palmR","kickR"); void ply.offsetWidth;
+    if(atk==="energy"){ ply.classList.add("lungeR"); await flyFx(ENERGY_ORB, ply, opp); }
+    else if(atk==="palm"){ ply.classList.add("palmR"); await wait(250); }
+    else { ply.classList.add("kickR"); await wait(290); }
     sfx.hit();
     opp.classList.remove("hurt"); void opp.offsetWidth; opp.classList.add("hurt");
-    burstFx(opp,"⭐",6);
+    burstFx(opp, atk==="energy"?"✨":(atk==="kick"?"👊":"💥"), 6);
     state.oppHp--; state.learned.set(state.word,state.icon);
     renderHp();
     await wait(650);

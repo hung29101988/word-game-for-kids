@@ -6,12 +6,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>smartkidsgame ・ 小朋友遊戲樂園</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1478301488354173"
      crossorigin="anonymous"></script>
 <!-- 兒童網站：強制只出非個人化廣告（符合 COPPA）-->
 <script>(window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;</script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap');
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body { min-height:100%; }
   body {
@@ -32,13 +35,21 @@
   .cl2::before{ width:6vmin; height:6vmin; top:-2.6vmin; left:2.5vmin; }
   @keyframes drift { to { transform:translateX(130vw); } }
 
-  /* 標題 */
+  /* 品牌 logo（直立式）*/
   header { z-index:1; text-align:center; }
-  .logo { font-size:11vmin; font-weight:900; color:#fff; letter-spacing:.6vmin;
-    text-shadow:0 1vmin 0 #f59e0b, 0 1.6vmin 2vmin rgba(0,0,0,.22); }
-  .brand { margin-top:.6vmin; font-size:3.4vmin; font-weight:800; letter-spacing:.3vmin;
-    color:#f59e0b; text-transform:lowercase; }
-  .tagline { margin-top:1.2vmin; font-size:4.4vmin; font-weight:700; color:#5b7a2e; }
+  .brandLogo { display:flex; flex-direction:column; align-items:center; }
+  .brandLogo .mascot { width:24vmin; max-width:130px; height:auto;
+    filter:drop-shadow(0 1vmin 0 rgba(0,0,0,.10)); }
+  .brandLogo .word { font-family:'Baloo 2',sans-serif; font-weight:800; line-height:.88;
+    font-size:clamp(40px,13vmin,76px); margin-top:.6vmin;
+    text-shadow:0 .5vmin 0 rgba(0,0,0,.08); }
+  .brandLogo .word .s1 { color:#f59e0b; }
+  .brandLogo .word .s2 { color:#5fbf3f; }
+  .brandLogo .game { font-family:'Baloo 2',sans-serif; font-weight:700; color:#fff;
+    background:#ff6f91; border-radius:50vmax; box-shadow:0 1vmin 0 #e04e72;
+    font-size:clamp(18px,5.6vmin,34px); letter-spacing:.34em;
+    padding:.06em .45em .12em .8em; margin-top:1.8vmin; display:inline-block; }
+  .tagline { margin-top:2.6vmin; font-size:4.4vmin; font-weight:700; color:#5b7a2e; }
 
   /* 遊戲卡片格 */
   .grid {
@@ -122,9 +133,21 @@
   <div class="cloud cl2"></div>
 
   <header>
-    <div class="logo">遊戲樂園</div>
-    <div class="brand">smartkidsgame</div>
-    <div class="tagline">揀一個遊戲，開始學習吧！</div>
+    <div class="brandLogo">
+      <svg class="mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Smart Kids Game" role="img">
+        <circle cx="22" cy="30" r="13" fill="#7a5230"/><circle cx="78" cy="30" r="13" fill="#7a5230"/>
+        <circle cx="22" cy="30" r="6" fill="#ff5d73"/><circle cx="78" cy="30" r="6" fill="#ff5d73"/>
+        <circle cx="50" cy="50" r="32" fill="#7a5230"/><circle cx="50" cy="54" r="26" fill="#ffe0c4"/>
+        <path d="M24 46 Q26 30 50 28 Q74 30 76 46 Q66 38 50 40 Q34 38 24 46 Z" fill="#7a5230"/>
+        <circle cx="40" cy="55" r="4" fill="#3a2a1a"/><circle cx="60" cy="55" r="4" fill="#3a2a1a"/>
+        <circle cx="41.5" cy="53.5" r="1.4" fill="#fff"/><circle cx="61.5" cy="53.5" r="1.4" fill="#fff"/>
+        <circle cx="33" cy="63" r="4.5" fill="#ffb3c1"/><circle cx="67" cy="63" r="4.5" fill="#ffb3c1"/>
+        <path d="M42 65 Q50 72 58 65" stroke="#c2502f" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="word"><span class="s1">Smart</span> <span class="s2">Kids</span></div>
+      <span class="game">GAME</span>
+    </div>
+    <div class="tagline">遊戲樂園 · 揀一個遊戲，開始學習吧！</div>
   </header>
 
   <!-- 遊戲選單 -->

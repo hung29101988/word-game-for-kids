@@ -274,8 +274,8 @@ function colorIcon(c){
 const COL = { red:"#e23b3b", blue:"#3f7fd0", green:"#3fb44a", yellow:"#f5c518", pink:"#ff8fb5" };
 const ENERGY_ORB = `<svg viewBox="0 0 100 100" style="width:13vmin;height:13vmin;overflow:visible"><defs><radialGradient id="eorb" cx="38%" cy="35%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#9fe4ff"/><stop offset="1" stop-color="#2c8fd6"/></radialGradient></defs><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(159,228,255,.45)" stroke-width="5"/><circle cx="50" cy="50" r="37" fill="url(#eorb)"/><ellipse cx="40" cy="36" rx="11" ry="7" fill="rgba(255,255,255,.7)"/></svg>`;
 
-/* ================= 字庫（英文）================= */
-const LEVELS = [
+/* ================= 字庫（英文）：8 個主題，每盤隨機抽 4 關 ================= */
+const BANK = [
   { hp:5, name:"顏色", pool:[["red",colorIcon(COL.red)],["blue",colorIcon(COL.blue)],["green",colorIcon(COL.green)],["yellow",colorIcon(COL.yellow)],["pink",colorIcon(COL.pink)]] },
   { hp:5, name:"動物", pool:[["dog","🐶"],["cat","🐱"],["bird","🐦"],["sheep","🐑"],["fish","🐟"]] },
   { hp:4, name:"身體", pool:[["eyes","👀"],["nose","👃"],["mouth","👄"],["hands","✋"]] },
@@ -286,8 +286,9 @@ const LEVELS = [
   { hp:5, name:"大自然", pool:[["sun","☀️"],["moon","🌙"],["star","⭐"],["tree","🌳"],["flower","🌸"]] },
 ];
 const MAX_PLY_HP = 5;
+const LEVELS_PER_GAME = 4;
 const WORD_ICON = {};
-LEVELS.forEach(l=>l.pool.forEach(([w,ic])=>{ WORD_ICON[w]=ic; }));
+BANK.forEach(l=>l.pool.forEach(([w,ic])=>{ WORD_ICON[w]=ic; }));
 
 /* ================= 功夫小女孩（側面，向右）================= */
 let _gid = 0;
@@ -425,7 +426,7 @@ function speakEn(text){ if(!("speechSynthesis" in window)) return; speechSynthes
   const u=new SpeechSynthesisUtterance(text); u.lang="en-GB"; u.rate=.75; u.pitch=1.05; if(enVoice) u.voice=enVoice; speechSynthesis.speak(u); }
 
 /* ================= 遊戲狀態 ================= */
-const state = { level:0, plyHp:MAX_PLY_HP, oppHp:0, oppMaxHp:0, word:null, icon:null, queue:[], learned:new Map(), busy:false };
+const state = { level:0, levels:[], plyHp:MAX_PLY_HP, oppHp:0, oppMaxHp:0, word:null, icon:null, queue:[], learned:new Map(), busy:false };
 
 function renderHp(){
   $("plyHpFill").style.width = Math.max(0,state.plyHp/MAX_PLY_HP*100)+"%";
@@ -452,7 +453,7 @@ function burstFx(centerEl, emoji, n=6){
 }
 
 async function startBattle(){
-  const lv=LEVELS[state.level];
+  const lv=state.levels[state.level];
   state.oppMaxHp=lv.hp; state.oppHp=lv.hp; state.plyHp=MAX_PLY_HP;
   state.queue=shuffle(lv.pool);
   showScreen("gameScreen");
@@ -475,7 +476,7 @@ async function startBattle(){
 }
 
 function nextQuestion(){
-  if(state.queue.length===0) state.queue=shuffle(LEVELS[state.level].pool);
+  if(state.queue.length===0) state.queue=shuffle(state.levels[state.level].pool);
   const [word,icon]=state.queue.shift();
   state.word=word; state.icon=icon;
   const bi=$("bubbleIcon");
@@ -486,7 +487,7 @@ function nextQuestion(){
   $("bubble").classList.add("show");
   sfx.ask(); speakEn(word);
   // 兩個選擇
-  const pool=LEVELS[state.level].pool.map(p=>p[0]).filter(w=>w!==word);
+  const pool=state.levels[state.level].pool.map(p=>p[0]).filter(w=>w!==word);
   const opts=shuffle([word, shuffle(pool)[0]]);
   document.querySelectorAll(".choice").forEach((b,i)=>{ b.textContent=opts[i]; b.className="choice"; });
   $("choices").classList.remove("locked");
@@ -545,7 +546,7 @@ async function winBattle(){
   opp.classList.remove("idle","hurt"); opp.parentElement.classList.add("faint");
   sfx.win(); burstFx(opp,"⭐",8);
   await wait(1000);
-  if(state.level>=LEVELS.length-1){ showResult(true); return; }
+  if(state.level>=state.levels.length-1){ showResult(true); return; }
   state.level++;
   await startBattle();
 }
@@ -560,7 +561,7 @@ async function loseBattle(){
 function showResult(won){
   const scr = won ? "winScreen" : "overScreen";
   $(won?"winScore":"overScore").textContent = won ? "★ "+state.learned.size : "★ "+state.learned.size;
-  document.querySelector("#"+scr+" .endStars").textContent = won ? "⭐".repeat(LEVELS.length) : "⭐".repeat(state.level);
+  document.querySelector("#"+scr+" .endStars").textContent = won ? "⭐".repeat(state.levels.length) : "⭐".repeat(state.level);
   const box=$("learnedWords"); box.innerHTML="";
   if(won){ state.learned.forEach((icon,word)=>{ const c=document.createElement("div"); c.className="learnedChip"; c.innerHTML=icon+" "+word; c.addEventListener("click",()=>speakEn(word)); box.appendChild(c); }); }
   if(won) sfx.win();
@@ -569,6 +570,7 @@ function showResult(won){
 
 function newGame(){
   state.level=0; state.learned=new Map();
+  state.levels=shuffle(BANK.slice()).slice(0,LEVELS_PER_GAME);   // 每盤隨機抽 4 個主題
   engaged=true; lastTick=Date.now();
   startBattle();
 }

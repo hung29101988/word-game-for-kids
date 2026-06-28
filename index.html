@@ -80,7 +80,39 @@
     color:#8aa564; font-size:4vmin; font-weight:700;
   }
 
-  footer { z-index:1; font-size:3.2vmin; color:#6f8c43; text-align:center; opacity:.85; }
+  /* 文字內容區（介紹／家長專區）*/
+  .panel { z-index:1; width:100%; max-width:760px;
+    background:rgba(255,255,255,.82); border-radius:5vmin; padding:5vmin 5vmin;
+    box-shadow:0 1.2vmin 0 rgba(0,0,0,.08); color:#42361f; line-height:1.75; }
+  .panel h2 { font-size:clamp(20px,5.4vmin,30px); color:#c47b06; margin-bottom:1.6vmin; }
+  .panel h3 { font-size:clamp(16px,4.2vmin,22px); color:#5b7a2e; margin:3vmin 0 1vmin; }
+  .panel p { font-size:clamp(14px,3.7vmin,18px); margin:1.2vmin 0; }
+  .panel ul { margin:1vmin 0 1vmin 5vmin; }
+  .panel li { font-size:clamp(14px,3.7vmin,18px); margin:.8vmin 0; }
+  .panel .lead { font-weight:700; color:#3a4a8a; }
+
+  /* 卡片說明文字 */
+  .card .desc { margin-top:1.4vmin; font-size:clamp(12px,3vmin,15px); line-height:1.45;
+    font-weight:600; color:#7a6a4e; text-align:center; white-space:normal; }
+  .card .meta { margin-top:1vmin; font-size:clamp(11px,2.7vmin,13px); font-weight:800;
+    color:#2eaf5a; letter-spacing:.2vmin; }
+
+  /* 文章列表 */
+  .arts { display:grid; grid-template-columns:1fr; gap:2.4vmin; margin-top:2vmin; }
+  @media(min-width:560px){ .arts { grid-template-columns:1fr 1fr; } }
+  .art { display:block; text-decoration:none; background:#fffef6; border:.5vmin solid #f0e6c8;
+    border-radius:4vmin; padding:3vmin 3.4vmin; color:#42361f; box-shadow:0 .9vmin 0 rgba(0,0,0,.06); }
+  .art:active { transform:translateY(.5vmin); }
+  .art .t { font-size:clamp(15px,4vmin,19px); font-weight:900; color:#c47b06; }
+  .art .s { font-size:clamp(13px,3.3vmin,16px); color:#6a5d44; margin-top:.8vmin; line-height:1.5; }
+
+  /* 導覽 */
+  .nav { z-index:1; display:flex; flex-wrap:wrap; gap:2vmin 3vmin; justify-content:center;
+    font-size:clamp(13px,3.4vmin,16px); font-weight:800; }
+  .nav a { color:#5b7a2e; text-decoration:none; }
+
+  footer { z-index:1; font-size:3.2vmin; color:#6f8c43; text-align:center; opacity:.85;
+    max-width:760px; line-height:1.8; }
   footer a { color:#6f8c43; }
 </style>
 </head>
@@ -94,6 +126,22 @@
     <div class="brand">smartkidsgame</div>
     <div class="tagline">揀一個遊戲，開始學習吧！</div>
   </header>
+
+  <!-- 網站簡介 -->
+  <section class="panel" aria-label="網站簡介">
+    <h2>免費兒童學習遊戲，專為 3 至 6 歲小朋友而設</h2>
+    <p class="lead">smartkidsgame（小朋友遊戲樂園）係一個完全免費、唔使下載、唔使登記嘅兒童教育網站。</p>
+    <p>我哋相信小朋友喺「玩」之中學得最開心、記得最牢。所以我哋親自設計咗一系列原創嘅學習小遊戲，將認字、計數、學英文呢啲基礎能力，包裝成一場又一場有趣嘅小冒險。每個遊戲都用<strong>廣東話語音</strong>陪小朋友一齊玩，就算未識字嘅幼兒，都可以靠聽同睇圖去學習。</p>
+    <p>所有遊戲都係專為<strong>平板電腦（iPad）同觸控屏幕</strong>而設計，畫面大、按鈕大、文字少，小手指都按得到。家長可以放心俾小朋友自己探索，亦都鼓勵你哋一齊陪玩，效果會更好。</p>
+    <h3>我哋嘅特色</h3>
+    <ul>
+      <li><strong>原創角色同畫面</strong>：所有怪獸、小主角、場景都係我哋自己設計繪畫，畫風可愛唔嚇人。</li>
+      <li><strong>廣東話語音教學</strong>：每個字、每條題目都有真人感覺嘅粵語讀音，學發音同認字一齊嚟。</li>
+      <li><strong>內置護眼提醒</strong>：連續玩 10 分鐘就會提你抖一抖，幫小朋友養成良好用眼習慣。</li>
+      <li><strong>循序漸進</strong>：由淺入深，由簡單嘅字詞到加減運算，配合小朋友嘅成長。</li>
+      <li><strong>完全免費、無內購</strong>：唔會喺遊戲入面引導小朋友課金。</li>
+    </ul>
+  </section>
 
   <!-- 遊戲選單 -->
   <main class="grid">
@@ -137,6 +185,8 @@
         </svg>
       </div>
       <div class="name">識字小戰士</div>
+      <div class="meta">中文認字 · 4 個關卡</div>
+      <div class="desc">用對戰冒險嘅方式認中文字。怪獸出題，揀啱個字就出招打敗佢，揀錯仲會有語音解釋個字點解，邊玩邊識字。</div>
       <span class="playPill">▶</span>
     </a>
 
@@ -171,6 +221,8 @@
         </svg>
       </div>
       <div class="name">加減大冒險</div>
+      <div class="meta">幼兒數學 · 橫向冒險</div>
+      <div class="desc">孖寶兄弟式嘅橫向闖關遊戲，一邊跳跳跳一邊做個位數加減。答案唔會係負數，啱晒幼稚園小朋友初學計數。</div>
       <span class="playPill">▶</span>
     </a>
 
@@ -207,6 +259,8 @@
         </svg>
       </div>
       <div class="name">英文大擂台</div>
+      <div class="meta">英文單字 · 格鬥風</div>
+      <div class="desc">格鬥遊戲風格嘅英文學習，功夫造型小女孩對戰怪獸。學顏色、動物、五官、家人共 18 個英文單字，二揀一答啱就出招。</div>
       <span class="playPill">▶</span>
     </a>
 
@@ -230,7 +284,42 @@
     <div class="ad-slot">廣告位（預留）</div>
   </section>
 
-  <footer>© smartkidsgame &nbsp;·&nbsp; <a href="privacy/">私隱政策 Privacy</a></footer>
+  <!-- 家長專區 -->
+  <section class="panel" aria-label="家長專區">
+    <h2>家長專區 — 幼兒學習文章</h2>
+    <p>除咗遊戲，我哋亦同家長分享一啲關於幼兒學習嘅心得同貼士。以下文章全部由我哋原創撰寫，希望幫到你陪小朋友成長。</p>
+    <div class="arts">
+      <a class="art" href="guides/learn-chinese/">
+        <div class="t">3 至 6 歲點樣學中文字？</div>
+        <div class="s">由認圖到認字，5 個喺屋企輕鬆教幼兒認中文字嘅方法。</div>
+      </a>
+      <a class="art" href="guides/learn-english/">
+        <div class="t">幼兒學英文單字嘅有效方法</div>
+        <div class="s">點樣令小朋友自然記得英文生字？由顏色、動物、身體部位入手。</div>
+      </a>
+      <a class="art" href="guides/learn-math/">
+        <div class="t">幼稚園小朋友點樣開始學加減？</div>
+        <div class="s">用實物、手指同遊戲，幫小朋友建立數感，唔使死記硬背。</div>
+      </a>
+      <a class="art" href="guides/screen-time/">
+        <div class="t">小朋友用平板，點樣先護眼？</div>
+        <div class="s">用眼時間、距離、光線同休息，家長要留意嘅幾件事。</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 導覽 -->
+  <nav class="nav" aria-label="網站導覽">
+    <a href="about/">關於我們</a>
+    <a href="guides/">家長專區</a>
+    <a href="contact/">聯絡我們</a>
+    <a href="privacy/">私隱政策</a>
+  </nav>
+
+  <footer>
+    © smartkidsgame · 免費兒童學習遊戲<br>
+    smartkidsgame.com — 認字、計數、學英文，喺玩之中成長。
+  </footer>
 
 </body>
 </html>

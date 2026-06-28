@@ -456,15 +456,14 @@ const WORD_DESC = {
   "水果":"例如蘋果同香蕉","水草":"係生喺水裏面嘅草","雪糕":"凍凍甜甜，好好食","飛機":"喺天上面飛",
 };
 
-// 揀錯時：彈卡顯示嗰個字嘅圖同解釋，語音講解
+// 揀錯時：彈卡顯示佢揀錯嗰個字嘅圖，語音簡短講「你揀咗X」
 async function explainWord(word){
   $("explainIcon").innerHTML = WORD_ICON[word] || "";
   $("explainWord").textContent = word;
-  const desc = WORD_DESC[word] || "";
-  $("explainDesc").textContent = desc;
+  $("explainDesc").textContent = "";
   $("explainCard").classList.add("show");
-  speak("你揀咗" + word + "。" + word + desc);
-  await wait(2900);
+  speak("你揀咗" + word);
+  await wait(1800);
   $("explainCard").classList.remove("show");
   await wait(250);
 }
@@ -917,9 +916,7 @@ async function answer(btn){
     buttons.forEach(b=>{ if(b!==btn && b!==rightBtn) b.classList.add("dim"); });
     sfx.wrong();
     await wait(450);
-    await explainWord(btn.textContent);        // 講解佢揀錯嗰個字係咩
-    speak("正確答案係" + state.word);            // 再講返正確答案
-    await wait(1100);
+    await explainWord(btn.textContent);          // 顯示佢揀錯嗰個字嘅圖，講「你揀咗X」
 
     // 對手攻擊自己
     $("bubble").classList.remove("show");

@@ -279,7 +279,11 @@ const LEVELS = [
   { hp:5, name:"顏色", pool:[["red",colorIcon(COL.red)],["blue",colorIcon(COL.blue)],["green",colorIcon(COL.green)],["yellow",colorIcon(COL.yellow)],["pink",colorIcon(COL.pink)]] },
   { hp:5, name:"動物", pool:[["dog","🐶"],["cat","🐱"],["bird","🐦"],["sheep","🐑"],["fish","🐟"]] },
   { hp:4, name:"身體", pool:[["eyes","👀"],["nose","👃"],["mouth","👄"],["hands","✋"]] },
-  { hp:4, name:"家人", pool:[["mummy","👩"],["daddy","👨"],["brother","👦"],["sister","👧"]] },
+  { hp:4, name:"家人", pool:[["mother","👩"],["father","👨"],["brother","👦"],["sister","👧"]] },
+  { hp:5, name:"食物", pool:[["apple","🍎"],["banana","🍌"],["egg","🥚"],["milk","🥛"],["cake","🍰"]] },
+  { hp:5, name:"動物2", pool:[["pig","🐷"],["cow","🐮"],["duck","🦆"],["rabbit","🐰"],["bear","🐻"]] },
+  { hp:5, name:"交通", pool:[["car","🚗"],["bus","🚌"],["boat","⛵"],["plane","✈️"],["train","🚂"]] },
+  { hp:5, name:"大自然", pool:[["sun","☀️"],["moon","🌙"],["star","⭐"],["tree","🌳"],["flower","🌸"]] },
 ];
 const MAX_PLY_HP = 5;
 const WORD_ICON = {};
@@ -452,7 +456,7 @@ async function startBattle(){
   state.oppMaxHp=lv.hp; state.oppHp=lv.hp; state.plyHp=MAX_PLY_HP;
   state.queue=shuffle(lv.pool);
   showScreen("gameScreen");
-  const arena=$("arena"); arena.classList.remove("stage0","stage1","stage2","stage3"); arena.classList.add("stage"+state.level);
+  const arena=$("arena"); arena.classList.remove("stage0","stage1","stage2","stage3"); arena.classList.add("stage"+(state.level%4));
   $("bubble").classList.remove("show");
   $("choices").classList.add("locked");
   document.querySelectorAll(".choice").forEach(b=>{ b.textContent=""; b.className="choice"; });

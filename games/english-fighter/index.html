@@ -525,7 +525,13 @@ async function answer(btn){
     btn.classList.add("wrong"); rightBtn.classList.add("right");
     buttons.forEach(b=>{ if(b!==btn && b!==rightBtn) b.classList.add("dim"); });
     sfx.wrong();
-    await wait(500); speakEn(state.word); await wait(800);
+    // 出返揀錯嗰個字嘅圖，講解 "it is XXX"
+    const wrongWord=btn.textContent, wrongIcon=WORD_ICON[wrongWord]||state.icon;
+    const bi=$("bubbleIcon");
+    bi.innerHTML=wrongIcon;
+    bi.style.fontSize=(!wrongIcon.startsWith("<svg") && [...wrongIcon].length>2) ? "11vmin" : "";
+    $("bubble").classList.remove("show"); void $("bubble").offsetWidth; $("bubble").classList.add("show");
+    await wait(450); speakEn("it is "+wrongWord); await wait(1300);
     $("bubble").classList.remove("show");
     const ply=$("plySprite"), opp=$("oppSprite");
     opp.classList.remove("lungeL"); void opp.offsetWidth; opp.classList.add("lungeL");
